@@ -1,0 +1,550 @@
+<!DOCTYPE html><html lang="en" class="scroll-smooth"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetFlow ERP | Terminal Operations Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --charcoal: #1a1a1a;
+            --graphite: #2a2a2a;
+            --teal-accent: #10b981;
+            --border-gray: #333333;
+        }
+
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background-color: var(--charcoal);
+            color: #e5e5e5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .industrial-border {
+            border: 1px solid var(--border-gray);
+        }
+
+        .btn-action {
+            @apply flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 border rounded-[2px];
+        }
+
+        .status-pill {
+            @apply px-2 py-0.5 text-[10px] font-bold uppercase tracking-tighter rounded-[2px] inline-flex items-center;
+        }
+
+        /* Overdue Table Specifics */
+        .row-urgent { background-color: rgba(239, 68, 68, 0.05); }
+        .row-warning { background-color: rgba(245, 158, 11, 0.05); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--charcoal); }
+        ::-webkit-scrollbar-thumb { background: var(--border-gray); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--teal-accent); }
+
+        /* Hide elements for Login State Simulation */
+        .logged-out .auth-only { display: none !important; }
+        .logged-in .guest-only { display: none !important; }
+    </style>
+</head>
+<body class="logged-in">
+    <!-- Root Container -->
+    <div class="flex h-screen overflow-hidden bg-[#0f0f0f]" data-sd-id="1">
+        
+        <!-- Persistent Sidebar Nav -->
+        <aside id="sidebar" class="w-64 industrial-border border-r border-t-0 border-b-0 border-l-0 bg-[#161616] flex flex-col z-50 transition-all duration-300" data-sd-id="2">
+            <!-- Org Context Header -->
+            <div class="p-5 flex items-center gap-3 border-b border-[#333]" data-sd-id="3">
+                <div class="w-8 h-8 bg-[#10b981] flex items-center justify-center rounded-[2px] shrink-0" data-sd-id="4">
+                    <iconify-icon icon="lucide:boxes" class="text-xl text-white"></iconify-icon>
+                </div>
+                <div class="overflow-hidden whitespace-nowrap" data-sd-id="5">
+                    <h1 class="text-sm font-bold uppercase tracking-widest text-white" data-sd-id="6">AssetFlow</h1>
+                    <p class="text-[10px] text-gray-500 font-semibold tracking-tighter uppercase" data-sd-id="7">Operations / Central-01</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 py-4 overflow-y-auto" data-sd-id="8">
+                <div class="px-4 mb-2" data-sd-id="9">
+                    <span class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]" data-sd-id="10">Management</span>
+                </div>
+                <ul class="space-y-1 px-2" data-sd-id="11">
+    <li data-sd-id="12">
+        <a href="/terminal" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[#10b981] bg-[#1a1a1a] rounded-[2px] group" data-sd-id="13">
+            <iconify-icon icon="lucide:layout-dashboard" class="text-lg"></iconify-icon>
+            <span class="truncate" data-sd-id="14">Operational Dashboard</span>
+        </a>
+    </li>
+    <li data-sd-id="15">
+        <a href="/directory" id="nav-inventory" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group" data-sd-id="16">
+            <iconify-icon icon="lucide:database" class="text-lg"></iconify-icon>
+            <span class="truncate" data-sd-id="17">Asset Directory</span>
+        </a>
+    </li>
+    <li data-sd-id="18">
+        <a href="/resources-1" id="nav-transfers" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group" data-sd-id="19">
+            <iconify-icon icon="lucide:arrow-left-right" class="text-lg"></iconify-icon>
+            <span class="truncate" data-sd-id="20">Resource Allocations</span>
+        </a>
+    </li>
+    <li>
+        <a href="/resources-2" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group">
+            <iconify-icon icon="lucide:calendar-clock" class="text-lg"></iconify-icon>
+            <span>Resource Booking</span>
+        </a>
+    </li>
+    <li>
+        <a href="/process" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group">
+            <iconify-icon icon="lucide:cable" class="text-lg"></iconify-icon>
+            <span>Process Visualization</span>
+        </a>
+    </li>
+</ul>
+            </nav>
+
+            <!-- Sidebar Footer: System Status -->
+            <div class="p-4 border-t border-[#333] bg-[#0f0f0f]" data-sd-id="33">
+                <div class="flex items-center justify-between mb-2" data-sd-id="34">
+                    <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="35">Server Status</span>
+                    <span class="flex items-center gap-1.5 text-[9px] font-bold text-[#10b981] uppercase" data-sd-id="36">
+                        <span class="w-1.5 h-1.5 bg-[#10b981] rounded-full animate-pulse" data-sd-id="37"></span>
+                        Nominal
+                    </span>
+                </div>
+                <div class="w-full bg-[#333] h-1 rounded-full overflow-hidden" data-sd-id="38">
+                    <div class="bg-[#10b981] h-full w-[88%]" data-sd-id="39"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col relative overflow-hidden" data-sd-id="40">
+            
+            <!-- Top Navbar -->
+            <header class="h-16 industrial-border border-b border-t-0 border-r-0 border-l-0 bg-[#161616] flex items-center justify-between px-6 z-40" data-sd-id="41">
+                <div class="flex items-center gap-6" data-sd-id="42">
+                    <button id="sidebar-toggle" class="text-gray-400 hover:text-white" data-sd-id="43">
+                        <iconify-icon icon="lucide:menu" class="text-xl"></iconify-icon>
+                    </button>
+                    <div class="flex flex-col" data-sd-id="44">
+                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest" data-sd-id="45">Active Site</span>
+                        <span class="text-xs font-semibold text-white" data-sd-id="46">NORTH_SECTOR_LOGISTICS_HUB</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-5" data-sd-id="47">
+                    <!-- Global Search -->
+                    <div class="relative hidden lg:block" data-sd-id="48">
+                        <iconify-icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></iconify-icon>
+                        <input type="text" placeholder="Search Tags, Serials, Employees..." class="bg-[#1a1a1a] border border-[#333] text-xs px-10 py-2 w-72 focus:outline-none focus:border-[#10b981] text-white" data-sd-id="49">
+                    </div>
+
+                    <div class="flex items-center gap-3 border-l border-[#333] pl-5" data-sd-id="50">
+                        <button id="nav-notifications" class="relative text-gray-400 hover:text-white p-1" data-sd-id="51">
+                            <iconify-icon icon="lucide:bell" class="text-xl"></iconify-icon>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-[#161616]" data-sd-id="52"></span>
+                        </button>
+                        
+                        <!-- User Menu / Login Toggle -->
+                        <div class="flex items-center gap-3 ml-2" data-sd-id="53">
+                            <div class="text-right auth-only" data-sd-id="54">
+                                <p class="text-[11px] font-bold text-white uppercase leading-none" data-sd-id="55">A. Miller</p>
+                                <p class="text-[9px] text-gray-500 font-semibold uppercase tracking-tighter" data-sd-id="56">Ops Manager</p>
+                            </div>
+                            <button id="user-profile-btn" class="w-8 h-8 bg-[#333] rounded-[2px] flex items-center justify-center hover:bg-[#444] transition-colors overflow-hidden" data-sd-id="57">
+                                <iconify-icon icon="lucide:user" class="text-lg text-gray-300 auth-only"></iconify-icon>
+                                <iconify-icon icon="lucide:log-in" class="text-lg text-[#10b981] guest-only" onclick="location.href='#'"></iconify-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6" data-sd-id="58">
+                
+                <!-- KPI Stat Row -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" data-sd-id="59">
+                    <!-- KPI 1 -->
+                    <div class="bg-[#161616] industrial-border p-4 flex flex-col justify-between" data-sd-id="60">
+                        <div class="flex items-center justify-between mb-2" data-sd-id="61">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="62">Available Assets</span>
+                            <iconify-icon icon="lucide:check-circle" class="text-[#10b981]"></iconify-icon>
+                        </div>
+                        <div class="flex items-baseline gap-2" data-sd-id="63">
+                            <span class="text-3xl font-extrabold mono text-white" data-sd-id="64">1,248</span>
+                            <span class="text-[10px] text-[#10b981] font-bold" data-sd-id="65">+12%</span>
+                        </div>
+                    </div>
+                    <!-- KPI 2 -->
+                    <div class="bg-[#161616] industrial-border p-4 flex flex-col justify-between" data-sd-id="66">
+                        <div class="flex items-center justify-between mb-2" data-sd-id="67">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="68">Allocated</span>
+                            <iconify-icon icon="lucide:user-check" class="text-blue-500"></iconify-icon>
+                        </div>
+                        <div class="flex items-baseline gap-2" data-sd-id="69">
+                            <span class="text-3xl font-extrabold mono text-white" data-sd-id="70">3,892</span>
+                            <span class="text-[10px] text-blue-500 font-bold" data-sd-id="71">In-Use</span>
+                        </div>
+                    </div>
+                    <!-- KPI 3 -->
+                    <div class="bg-[#161616] industrial-border p-4 flex flex-col justify-between" data-sd-id="72">
+                        <div class="flex items-center justify-between mb-2" data-sd-id="73">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="74">Maintenance</span>
+                            <iconify-icon icon="lucide:settings" class="text-orange-500 animate-spin-slow"></iconify-icon>
+                        </div>
+                        <div class="flex items-baseline gap-2" data-sd-id="75">
+                            <span class="text-3xl font-extrabold mono text-white" data-sd-id="76">42</span>
+                            <span class="text-[10px] text-orange-500 font-bold" data-sd-id="77">Today</span>
+                        </div>
+                    </div>
+                    <!-- KPI 4 -->
+                    <div class="bg-[#161616] industrial-border p-4 flex flex-col justify-between border-b-2 border-b-amber-600" data-sd-id="78">
+                        <div class="flex items-center justify-between mb-2" data-sd-id="79">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="80">Active Bookings</span>
+                            <iconify-icon icon="lucide:calendar-range" class="text-amber-500"></iconify-icon>
+                        </div>
+                        <div class="flex items-baseline gap-2" data-sd-id="81">
+                            <span class="text-3xl font-extrabold mono text-white" data-sd-id="82">156</span>
+                            <span class="text-[10px] text-amber-500 font-bold" data-sd-id="83">Queued</span>
+                        </div>
+                    </div>
+                    <!-- KPI 5 -->
+                    <div class="bg-[#161616] industrial-border p-4 flex flex-col justify-between" data-sd-id="84">
+                        <div class="flex items-center justify-between mb-2" data-sd-id="85">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="86">Pending Transfers</span>
+                            <iconify-icon icon="lucide:move" class="text-cyan-500"></iconify-icon>
+                        </div>
+                        <div class="flex items-baseline gap-2" data-sd-id="87">
+                            <span class="text-3xl font-extrabold mono text-white" data-sd-id="88">18</span>
+                            <span class="text-[10px] text-cyan-500 font-bold" data-sd-id="89">Inbound</span>
+                        </div>
+                    </div>
+                    <!-- KPI 6 -->
+                    <div class="bg-[#161616] industrial-border p-4 flex flex-col justify-between border-b-2 border-b-red-600" data-sd-id="90">
+                        <div class="flex items-center justify-between mb-2" data-sd-id="91">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="92">Overdue Returns</span>
+                            <iconify-icon icon="lucide:alert-triangle" class="text-red-500"></iconify-icon>
+                        </div>
+                        <div class="flex items-baseline gap-2" data-sd-id="93">
+                            <span class="text-3xl font-extrabold mono text-white text-red-500" data-sd-id="94">24</span>
+                            <span class="text-[10px] text-red-500 font-bold uppercase tracking-tighter" data-sd-id="95">Urgent</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Toolbar -->
+                <div class="flex flex-wrap gap-4 items-center" data-sd-id="96">
+                    <button id="action-register" class="btn-action border-[#10b981] bg-[#10b981]/10 text-[#10b981] hover:bg-[#10b981] hover:text-white" data-sd-id="97">
+                        <iconify-icon icon="lucide:plus"></iconify-icon> Register Asset
+                    </button>
+                    <button id="action-allocate" class="btn-action border-[#333] bg-[#1a1a1a] text-gray-300 hover:border-[#10b981] hover:text-[#10b981]" data-sd-id="98">
+                        <iconify-icon icon="lucide:user-plus"></iconify-icon> New Allocation
+                    </button>
+                    <button id="action-audit" class="btn-action border-[#333] bg-[#1a1a1a] text-gray-300 hover:border-[#10b981] hover:text-[#10b981]" data-sd-id="99">
+                        <iconify-icon icon="lucide:clipboard-list"></iconify-icon> Batch Audit
+                    </button>
+                    <button id="action-report" class="btn-action border-[#333] bg-[#1a1a1a] text-gray-300 hover:border-[#10b981] hover:text-[#10b981]" data-sd-id="100">
+                        <iconify-icon icon="lucide:download"></iconify-icon> Export KPI
+                    </button>
+                </div>
+
+                <!-- Overdue Returns Data Grid -->
+                <div class="bg-[#161616] industrial-border overflow-hidden" data-sd-id="101">
+                    <div class="px-5 py-4 border-b border-[#333] flex justify-between items-center bg-[#1a1a1a]" data-sd-id="102">
+                        <div data-sd-id="103">
+                            <h3 class="text-sm font-bold uppercase tracking-widest text-white" data-sd-id="104">Critical Overdue Returns</h3>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-tighter mt-0.5" data-sd-id="105">Assets exceeding return window by &gt;48 hours</p>
+                        </div>
+                        <div class="flex gap-2" data-sd-id="106">
+                            <button id="view-all-overdue" class="text-[10px] font-bold text-[#10b981] uppercase hover:underline" data-sd-id="107">View Detailed Queue</button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto" data-sd-id="108">
+                        <table class="w-full text-left border-collapse" data-sd-id="109">
+                            <thead data-sd-id="110">
+                                <tr class="bg-[#131313] text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-[#333]" data-sd-id="111">
+                                    <th class="px-6 py-3" data-sd-id="112">Asset Tag</th>
+                                    <th class="px-6 py-3" data-sd-id="113">Asset Category</th>
+                                    <th class="px-6 py-3" data-sd-id="114">Current Holder</th>
+                                    <th class="px-6 py-3" data-sd-id="115">Serial Number</th>
+                                    <th class="px-6 py-3" data-sd-id="116">Due Date</th>
+                                    <th class="px-6 py-3" data-sd-id="117">Overdue Time</th>
+                                    <th class="px-6 py-3" data-sd-id="118">Status</th>
+                                    <th class="px-6 py-3 text-right" data-sd-id="119">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-xs" data-sd-id="120">
+                                <!-- Row 1 (Urgent) -->
+                                <tr class="border-b border-[#333] hover:bg-[#1e1e1e] transition-colors row-urgent" data-sd-id="121">
+                                    <td class="px-6 py-4 mono font-bold text-white" data-sd-id="122">#LT-7729-A</td>
+                                    <td class="px-6 py-4 text-gray-400" data-sd-id="123">Panasonic Toughbook FZ-55</td>
+                                    <td class="px-6 py-4" data-sd-id="124">
+                                        <div class="flex items-center gap-2" data-sd-id="125">
+                                            <span class="font-semibold text-white" data-sd-id="126">Marcus Vance</span>
+                                            <span class="text-[9px] text-gray-500" data-sd-id="127">(ENG-42)</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 mono text-gray-500" data-sd-id="128">SN: 4492-001-XJ</td>
+                                    <td class="px-6 py-4 mono text-gray-300" data-sd-id="129">2024-05-18</td>
+                                    <td class="px-6 py-4 text-red-500 font-bold" data-sd-id="130">124h</td>
+                                    <td class="px-6 py-4" data-sd-id="131">
+                                        <span class="status-pill bg-red-500/10 text-red-500 border border-red-500/20" data-sd-id="132">Critical</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right" data-sd-id="133">
+                                        <button id="row-1-notify" class="text-gray-400 hover:text-[#10b981] transition-colors" data-sd-id="134"><iconify-icon icon="lucide:bell-ring"></iconify-icon></button>
+                                    </td>
+                                </tr>
+                                <!-- Row 2 (Urgent) -->
+                                <tr class="border-b border-[#333] hover:bg-[#1e1e1e] transition-colors row-urgent" data-sd-id="135">
+                                    <td class="px-6 py-4 mono font-bold text-white" data-sd-id="136">#MT-105-B</td>
+                                    <td class="px-6 py-4 text-gray-400" data-sd-id="137">Fluke 179 Digital Multimeter</td>
+                                    <td class="px-6 py-4" data-sd-id="138">
+                                        <div class="flex items-center gap-2" data-sd-id="139">
+                                            <span class="font-semibold text-white" data-sd-id="140">Sarah Chen</span>
+                                            <span class="text-[9px] text-gray-500" data-sd-id="141">(MAINT-12)</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 mono text-gray-500" data-sd-id="142">SN: FL-992381</td>
+                                    <td class="px-6 py-4 mono text-gray-300" data-sd-id="143">2024-05-20</td>
+                                    <td class="px-6 py-4 text-red-500 font-bold" data-sd-id="144">72h</td>
+                                    <td class="px-6 py-4" data-sd-id="145">
+                                        <span class="status-pill bg-red-500/10 text-red-500 border border-red-500/20" data-sd-id="146">Critical</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right" data-sd-id="147">
+                                        <button id="row-2-notify" class="text-gray-400 hover:text-[#10b981] transition-colors" data-sd-id="148"><iconify-icon icon="lucide:bell-ring"></iconify-icon></button>
+                                    </td>
+                                </tr>
+                                <!-- Row 3 (Warning) -->
+                                <tr class="border-b border-[#333] hover:bg-[#1e1e1e] transition-colors row-warning" data-sd-id="149">
+                                    <td class="px-6 py-4 mono font-bold text-white" data-sd-id="150">#CAM-02-X</td>
+                                    <td class="px-6 py-4 text-gray-400" data-sd-id="151">FLIR Thermal Imaging Cam</td>
+                                    <td class="px-6 py-4" data-sd-id="152">
+                                        <div class="flex items-center gap-2" data-sd-id="153">
+                                            <span class="font-semibold text-white" data-sd-id="154">Derrick Lowe</span>
+                                            <span class="text-[9px] text-gray-500" data-sd-id="155">(AUDIT-03)</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 mono text-gray-500" data-sd-id="156">SN: FR-02931</td>
+                                    <td class="px-6 py-4 mono text-gray-300" data-sd-id="157">2024-05-21</td>
+                                    <td class="px-6 py-4 text-amber-500 font-bold" data-sd-id="158">48h</td>
+                                    <td class="px-6 py-4" data-sd-id="159">
+                                        <span class="status-pill bg-amber-500/10 text-amber-500 border border-amber-500/20" data-sd-id="160">Overdue</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right" data-sd-id="161">
+                                        <button id="row-3-notify" class="text-gray-400 hover:text-[#10b981] transition-colors" data-sd-id="162"><iconify-icon icon="lucide:bell-ring"></iconify-icon></button>
+                                    </td>
+                                </tr>
+                                <!-- Row 4 -->
+                                <tr class="border-b border-[#333] hover:bg-[#1e1e1e] transition-colors" data-sd-id="163">
+                                    <td class="px-6 py-4 mono font-bold text-white" data-sd-id="164">#SCAN-44</td>
+                                    <td class="px-6 py-4 text-gray-400" data-sd-id="165">Honeywell Industrial Scanner</td>
+                                    <td class="px-6 py-4" data-sd-id="166">
+                                        <div class="flex items-center gap-2" data-sd-id="167">
+                                            <span class="font-semibold text-white" data-sd-id="168">Priya Sharma</span>
+                                            <span class="text-[9px] text-gray-500" data-sd-id="169">(LOGS-01)</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 mono text-gray-500" data-sd-id="170">SN: HW-SCAN-A4</td>
+                                    <td class="px-6 py-4 mono text-gray-300" data-sd-id="171">2024-05-22</td>
+                                    <td class="px-6 py-4 text-gray-400 font-bold" data-sd-id="172">24h</td>
+                                    <td class="px-6 py-4" data-sd-id="173">
+                                        <span class="status-pill bg-gray-500/10 text-gray-400 border border-gray-500/20" data-sd-id="174">Warning</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right" data-sd-id="175">
+                                        <button id="row-4-notify" class="text-gray-400 hover:text-[#10b981] transition-colors" data-sd-id="176"><iconify-icon icon="lucide:bell-ring"></iconify-icon></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination / Table Footer -->
+                    <div class="px-6 py-3 border-t border-[#333] bg-[#131313] flex justify-between items-center" data-sd-id="177">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="178">Showing 4 of 24 Critical Records</span>
+                        <div class="flex gap-1" data-sd-id="179">
+                            <button class="w-8 h-8 industrial-border flex items-center justify-center text-gray-400 hover:text-white hover:border-[#10b981]" data-sd-id="180"><iconify-icon icon="lucide:chevron-left"></iconify-icon></button>
+                            <button class="w-8 h-8 industrial-border flex items-center justify-center text-[#10b981] border-[#10b981]" data-sd-id="181">1</button>
+                            <button class="w-8 h-8 industrial-border flex items-center justify-center text-gray-400 hover:text-white" data-sd-id="182">2</button>
+                            <button class="w-8 h-8 industrial-border flex items-center justify-center text-gray-400 hover:text-white" data-sd-id="183">3</button>
+                            <button class="w-8 h-8 industrial-border flex items-center justify-center text-gray-400 hover:text-white hover:border-[#10b981]" data-sd-id="184"><iconify-icon icon="lucide:chevron-right"></iconify-icon></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Grid: Active Bookings & Maintenance -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" data-sd-id="185">
+                    <!-- Column 1: Asset Utilization Trend -->
+                    <div class="bg-[#161616] industrial-border" data-sd-id="186">
+                        <div class="px-5 py-3 border-b border-[#333] flex justify-between items-center bg-[#1a1a1a]" data-sd-id="187">
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-white" data-sd-id="188">Resource Utilization Trend</h3>
+                            <select class="bg-[#0f0f0f] border border-[#333] text-[10px] px-2 py-1 text-gray-400 outline-none" data-sd-id="189">
+                                <option data-sd-id="190">Last 30 Days</option>
+                                <option data-sd-id="191">Last 7 Days</option>
+                            </select>
+                        </div>
+                        <div class="p-6 h-[200px] flex items-end gap-2 justify-between" data-sd-id="192">
+                            <!-- Placeholder Chart Bars (Visual Only) -->
+                            <div class="flex-1 bg-gray-800 h-[60%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="193">
+                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] mono opacity-0 group-hover:opacity-100" data-sd-id="194">62%</span>
+                            </div>
+                            <div class="flex-1 bg-gray-800 h-[45%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="195"></div>
+                            <div class="flex-1 bg-gray-800 h-[80%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="196"></div>
+                            <div class="flex-1 bg-gray-800 h-[95%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="197"></div>
+                            <div class="flex-1 bg-[#10b981] h-[85%] group relative" data-sd-id="198"></div>
+                            <div class="flex-1 bg-gray-800 h-[40%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="199"></div>
+                            <div class="flex-1 bg-gray-800 h-[55%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="200"></div>
+                            <div class="flex-1 bg-gray-800 h-[70%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="201"></div>
+                            <div class="flex-1 bg-gray-800 h-[65%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="202"></div>
+                            <div class="flex-1 bg-gray-800 h-[30%] hover:bg-[#10b981] transition-colors group relative" data-sd-id="203"></div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Scheduled Maintenance Task Feed -->
+                    <div class="bg-[#161616] industrial-border" data-sd-id="204">
+                        <div class="px-5 py-3 border-b border-[#333] bg-[#1a1a1a]" data-sd-id="205">
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-white" data-sd-id="206">Maintenance Queue</h3>
+                        </div>
+                        <div class="divide-y divide-[#333]" data-sd-id="207">
+                            <!-- Task 1 -->
+                            <div class="p-4 flex gap-4 hover:bg-[#1e1e1e]" data-sd-id="208">
+                                <div class="w-10 h-10 bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0" data-sd-id="209">
+                                    <iconify-icon icon="lucide:alert-circle" class="text-orange-500 text-lg"></iconify-icon>
+                                </div>
+                                <div class="flex-1" data-sd-id="210">
+                                    <div class="flex justify-between" data-sd-id="211">
+                                        <p class="text-xs font-bold text-white uppercase tracking-tight" data-sd-id="212">Hydraulic Press A-40</p>
+                                        <span class="text-[9px] mono text-gray-500 uppercase" data-sd-id="213">10:45 AM</span>
+                                    </div>
+                                    <p class="text-[10px] text-gray-400 mt-0.5" data-sd-id="214">Annual calibration &amp; fluid check overdue. Priority: High.</p>
+                                    <div class="mt-2 flex gap-2" data-sd-id="215">
+                                        <button class="px-2 py-0.5 border border-[#333] text-[9px] font-bold uppercase hover:bg-white hover:text-black" data-sd-id="216">Assign tech</button>
+                                        <button class="px-2 py-0.5 border border-[#333] text-[9px] font-bold uppercase hover:bg-white hover:text-black" data-sd-id="217">Delay</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Task 2 -->
+                            <div class="p-4 flex gap-4 hover:bg-[#1e1e1e]" data-sd-id="218">
+                                <div class="w-10 h-10 bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0" data-sd-id="219">
+                                    <iconify-icon icon="lucide:clock" class="text-blue-500 text-lg"></iconify-icon>
+                                </div>
+                                <div class="flex-1" data-sd-id="220">
+                                    <div class="flex justify-between" data-sd-id="221">
+                                        <p class="text-xs font-bold text-white uppercase tracking-tight" data-sd-id="222">Drone Unit #04</p>
+                                        <span class="text-[9px] mono text-gray-500 uppercase" data-sd-id="223">02:15 PM</span>
+                                    </div>
+                                    <p class="text-[10px] text-gray-400 mt-0.5" data-sd-id="224">Propeller inspection required after Sector B flight.</p>
+                                    <div class="mt-2 flex gap-2" data-sd-id="225">
+                                        <button class="px-2 py-0.5 border border-[#10b981] text-[9px] font-bold uppercase text-[#10b981] hover:bg-[#10b981] hover:text-white" data-sd-id="226">Start Task</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Sticky Footer -->
+            <footer class="h-10 industrial-border border-t border-b-0 border-r-0 border-l-0 bg-[#161616] flex items-center justify-between px-6 z-40" data-sd-id="227">
+                <div class="flex gap-4" data-sd-id="228">
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="229">AssetFlow v4.2.0-PROD</span>
+                    <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest px-2 border-l border-[#333]" data-sd-id="230">Site: HUB-01-NORTH</span>
+                    <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest px-2 border-l border-[#333]" data-sd-id="231">LAT: 51.5074° N | LON: 0.1278° W</span>
+                </div>
+                <div class="flex gap-6 items-center" data-sd-id="232">
+                    <a href="#" id="footer-docs-link" class="text-[9px] font-bold text-gray-500 uppercase hover:text-white" data-sd-id="233">Documentation</a>
+                    <a href="#" id="footer-support-link" class="text-[9px] font-bold text-gray-500 uppercase hover:text-white" data-sd-id="234">Operational Support</a>
+                    <div class="h-4 w-px bg-[#333]" data-sd-id="235"></div>
+                    <span class="text-[9px] font-bold text-gray-400 uppercase tabular-nums" data-sd-id="236">14:23:09 UTC</span>
+                </div>
+            </footer>
+
+            <!-- Quick Access Login Modal (Simulated Depth) -->
+            <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm hidden" data-sd-id="237">
+                <div class="w-full max-w-sm bg-[#1a1a1a] industrial-border p-8 relative" data-sd-id="238">
+                    <button id="close-login" class="absolute top-4 right-4 text-gray-500 hover:text-white" data-sd-id="239">
+                        <iconify-icon icon="lucide:x" class="text-xl"></iconify-icon>
+                    </button>
+                    <div class="mb-6" data-sd-id="240">
+                        <div class="w-10 h-10 bg-[#10b981] flex items-center justify-center rounded-[2px] mb-4" data-sd-id="241">
+                            <iconify-icon icon="lucide:lock" class="text-2xl text-white"></iconify-icon>
+                        </div>
+                        <h2 class="text-xl font-bold uppercase tracking-widest text-white" data-sd-id="242">System Auth</h2>
+                        <p class="text-xs text-gray-500 uppercase tracking-tighter mt-1" data-sd-id="243">Authorized Operations Only</p>
+                    </div>
+                    <form onsubmit="return false;" class="space-y-4" data-sd-id="244">
+                        <div class="space-y-1.5" data-sd-id="245">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="246">Employee ID</label>
+                            <input type="text" class="w-full bg-[#0f0f0f] border border-[#333] px-3 py-2 text-sm text-white focus:outline-none focus:border-[#10b981]" placeholder="AF-XXXX-XX" data-sd-id="247">
+                        </div>
+                        <div class="space-y-1.5" data-sd-id="248">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="249">Security Pin</label>
+                            <input type="password" class="w-full bg-[#0f0f0f] border border-[#333] px-3 py-2 text-sm text-white focus:outline-none focus:border-[#10b981]" placeholder="••••••" data-sd-id="250">
+                        </div>
+                        <button class="w-full bg-[#10b981] hover:bg-[#0d9469] text-white py-3 text-xs font-bold uppercase tracking-[0.2em] mt-4 transition-colors" data-sd-id="251">
+                            Initialize Session
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Sidebar Toggle Logic
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        let isExpanded = true;
+
+        sidebarToggle.addEventListener('click', () => {
+            if (isExpanded) {
+                sidebar.style.width = '64px';
+                // Hide labels manually for smooth transition simulation
+                document.querySelectorAll('#sidebar span, #sidebar p, #sidebar h1').forEach(el => el.classList.add('hidden'));
+            } else {
+                sidebar.style.width = '256px';
+                document.querySelectorAll('#sidebar span, #sidebar p, #sidebar h1').forEach(el => el.classList.remove('hidden'));
+            }
+            isExpanded = !isExpanded;
+        });
+
+        // Simple Login Modal Toggle for Demo
+        const profileBtn = document.getElementById('user-profile-btn');
+        const loginModal = document.getElementById('login-modal');
+        const closeLogin = document.getElementById('close-login');
+
+        profileBtn.addEventListener('click', () => {
+            if (document.body.classList.contains('logged-out')) {
+                loginModal.classList.remove('hidden');
+            } else {
+                // Simulate logout
+                if (confirm('Terminate operational session?')) {
+                    document.body.classList.remove('logged-in');
+                    document.body.classList.add('logged-out');
+                }
+            }
+        });
+
+        closeLogin.addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+        });
+
+        // Initialize state for demo
+        document.body.classList.add('logged-in');
+    </script>
+
+</body></html>
+
+
+

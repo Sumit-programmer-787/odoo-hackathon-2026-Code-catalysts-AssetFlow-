@@ -1,0 +1,433 @@
+<!DOCTYPE html><html lang="en" class="scroll-smooth"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetFlow ERP | Resource Booking &amp; Timeline</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --charcoal: #1a1a1a;
+            --graphite: #2a2a2a;
+            --teal-accent: #10b981;
+            --border-gray: #333333;
+        }
+
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background-color: var(--charcoal);
+            color: #e5e5e5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .industrial-border {
+            border: 1px solid var(--border-gray);
+        }
+
+        .input-field {
+            @apply w-full bg-[#161616] border border-[#333] px-3 py-2 text-xs text-white focus:outline-none focus:border-[#10b981] transition-colors rounded-[2px];
+        }
+
+        .status-pill {
+            @apply px-2 py-0.5 text-[10px] font-bold uppercase tracking-tighter rounded-[2px] inline-flex items-center gap-1;
+        }
+
+        .btn-primary {
+            @apply bg-[#10b981] hover:bg-[#0d9469] text-white font-bold py-2.5 px-4 text-[10px] uppercase tracking-widest transition-all rounded-[2px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+        }
+
+        .btn-secondary {
+            @apply border border-[#333] hover:border-white text-gray-400 hover:text-white font-bold py-2 px-4 text-[10px] uppercase tracking-widest transition-all rounded-[2px];
+        }
+
+        /* Timeline Specifics */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: 180px repeat(30, 80px);
+        }
+
+        .timeline-cell {
+            @apply border-r border-[#333] h-12 flex items-center justify-center text-[10px] font-bold text-gray-600;
+        }
+
+        .booking-block {
+            @apply absolute h-8 mt-2 rounded-[2px] text-[9px] font-bold px-2 flex items-center border overflow-hidden whitespace-nowrap z-10;
+        }
+
+        .conflict-overlay {
+            @apply absolute inset-0 bg-red-500/10 border-2 border-red-500/40 z-20 pointer-events-none flex items-center justify-center;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--charcoal); }
+        ::-webkit-scrollbar-thumb { background: var(--border-gray); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--teal-accent); }
+    </style>
+</head>
+<body>
+    <!-- Root Container -->
+    <div class="flex h-screen overflow-hidden bg-[#0f0f0f]" data-sd-id="1">
+        
+        <!-- Persistent Sidebar Nav -->
+        <aside id="sidebar-nav" class="w-64 industrial-border border-r border-y-0 border-l-0 bg-[#161616] flex flex-col z-50" data-sd-id="2">
+            <div class="p-5 flex items-center gap-3 border-b border-[#333]" data-sd-id="3">
+                <div class="w-8 h-8 bg-[#10b981] flex items-center justify-center rounded-[2px] shrink-0" data-sd-id="4">
+                    <iconify-icon icon="lucide:boxes" class="text-xl text-white"></iconify-icon>
+                </div>
+                <div class="overflow-hidden whitespace-nowrap" data-sd-id="5">
+                    <h1 class="text-sm font-bold uppercase tracking-widest text-white" data-sd-id="6">AssetFlow</h1>
+                    <p class="text-[10px] text-gray-500 font-semibold tracking-tighter uppercase" data-sd-id="7">Operations / Central-01</p>
+                </div>
+            </div>
+
+            <nav class="flex-1 py-4 overflow-y-auto" data-sd-id="8">
+                <div class="px-4 mb-2" data-sd-id="9">
+                    <span class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]" data-sd-id="10">Management</span>
+                </div>
+               <ul class="space-y-1 px-2" data-sd-id="11">
+    <li data-sd-id="12">
+        <a href="/terminal" id="sidebar-nav-dash" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group" data-sd-id="13">
+            <iconify-icon icon="lucide:layout-dashboard" class="text-lg"></iconify-icon>
+            <span data-sd-id="14">Operational Dashboard</span>
+        </a>
+    </li>
+    <li data-sd-id="15">
+        <a href="/directory" id="sidebar-nav-directory" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group" data-sd-id="16">
+            <iconify-icon icon="lucide:database" class="text-lg"></iconify-icon>
+            <span data-sd-id="17">Asset Directory</span>
+        </a>
+    </li>
+    <li data-sd-id="21">
+        <a href="/resources-1" id="sidebar-nav-transfer" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group" data-sd-id="22">
+            <iconify-icon icon="lucide:arrow-left-right" class="text-lg"></iconify-icon>
+            <span data-sd-id="23">Resource Allocations</span>
+        </a>
+    </li>
+    <li data-sd-id="18">
+        <a href="/resources-2" id="sidebar-nav-booking" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[#10b981] bg-[#1a1a1a] rounded-[2px] group" data-sd-id="19">
+            <iconify-icon icon="lucide:calendar-clock" class="text-lg"></iconify-icon>
+            <span data-sd-id="20">Resource Booking</span>
+        </a>
+    </li>
+    <li>
+        <a href="/process" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group">
+            <iconify-icon icon="lucide:cable" class="text-lg"></iconify-icon>
+            <span>Process Visualization</span>
+        </a>
+    </li>
+</ul>
+            </nav>
+
+            <div class="p-4 border-t border-[#333] bg-[#0f0f0f]" data-sd-id="24">
+                <div class="flex items-center justify-between mb-2" data-sd-id="25">
+                    <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="26">Site Quota</span>
+                    <span class="text-[9px] font-bold text-[#10b981] uppercase" data-sd-id="27">64/80 Resources</span>
+                </div>
+                <div class="w-full bg-[#333] h-1 rounded-full overflow-hidden" data-sd-id="28">
+                    <div class="bg-[#10b981] h-full w-[80%]" data-sd-id="29"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col relative overflow-hidden" data-sd-id="30">
+            
+            <!-- Top Navbar -->
+            <header id="main-header" class="h-16 industrial-border border-b border-x-0 border-t-0 bg-[#161616] flex items-center justify-between px-6 z-40" data-sd-id="31">
+                <div class="flex items-center gap-6" data-sd-id="32">
+                    <div class="flex flex-col" data-sd-id="33">
+                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1" data-sd-id="34">Logistics Module</span>
+                        <span class="text-xs font-semibold text-white uppercase tracking-tight" data-sd-id="35">Timeline &amp; Resource Scheduling</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4" data-sd-id="36">
+                    <div class="flex items-center gap-2 border border-[#333] bg-[#0f0f0f] px-3 py-1.5 rounded-[2px]" data-sd-id="37">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="38">May 2024</span>
+                        <div class="flex gap-1 ml-2" data-sd-id="39">
+                            <button id="nav-month-prev" class="text-gray-400 hover:text-white" data-sd-id="40"><iconify-icon icon="lucide:chevron-left"></iconify-icon></button>
+                            <button id="nav-month-next" class="text-gray-400 hover:text-white" data-sd-id="41"><iconify-icon icon="lucide:chevron-right"></iconify-icon></button>
+                        </div>
+                    </div>
+                    <div class="h-8 w-px bg-[#333] mx-2" data-sd-id="42"></div>
+                    <button id="header-user-menu" class="flex items-center gap-3 group" data-sd-id="43">
+                        <div class="text-right" data-sd-id="44">
+                            <p class="text-[10px] font-bold text-white uppercase leading-none" data-sd-id="45">A. Miller</p>
+                            <p class="text-[8px] text-[#10b981] font-semibold uppercase" data-sd-id="46">Sys-Admin</p>
+                        </div>
+                        <div class="w-8 h-8 bg-[#333] rounded-[2px] flex items-center justify-center group-hover:bg-[#444]" data-sd-id="47">
+                            <iconify-icon icon="lucide:user" class="text-lg text-gray-300"></iconify-icon>
+                        </div>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-8" data-sd-id="48">
+                
+                <!-- Resource Timeline Grid -->
+                <div class="bg-[#161616] industrial-border flex flex-col" data-sd-id="49">
+                    <div class="px-5 py-3 border-b border-[#333] bg-[#1a1a1a] flex justify-between items-center" data-sd-id="50">
+                        <div class="flex items-center gap-4" data-sd-id="51">
+                            <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="52">Master Resource Timeline</h3>
+                            <div class="flex gap-3" data-sd-id="53">
+                                <span class="flex items-center gap-1.5 text-[9px] font-bold text-blue-400 uppercase" data-sd-id="54"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full" data-sd-id="55"></span> Upcoming</span>
+                                <span class="flex items-center gap-1.5 text-[9px] font-bold text-[#10b981] uppercase" data-sd-id="56"><span class="w-1.5 h-1.5 bg-[#10b981] rounded-full" data-sd-id="57"></span> Ongoing</span>
+                                <span class="flex items-center gap-1.5 text-[9px] font-bold text-red-500 uppercase" data-sd-id="58"><span class="w-1.5 h-1.5 bg-red-500 rounded-full" data-sd-id="59"></span> Conflict</span>
+                            </div>
+                        </div>
+                        <button id="view-settings-btn" class="text-[9px] font-bold text-gray-500 uppercase hover:text-white transition-colors" data-sd-id="60">View Config</button>
+                    </div>
+
+                    <!-- Scrollable Timeline Container -->
+                    <div class="overflow-x-auto" data-sd-id="61">
+                        <div class="timeline-grid min-w-[2580px]" data-sd-id="62">
+                            <!-- Header Row: Days -->
+                            <div class="timeline-cell bg-[#131313] border-b border-[#333] sticky left-0 z-30 justify-start px-5 text-gray-400" data-sd-id="63">Resource Unit</div>
+                            <template id="day-template">
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="64">MAY 01</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="65">MAY 02</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="66">MAY 03</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="67">MAY 04</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="68">MAY 05</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="69">MAY 06</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="70">MAY 07</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="71">MAY 08</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="72">MAY 09</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="73">MAY 10</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="74">MAY 11</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="75">MAY 12</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="76">MAY 13</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="77">MAY 14</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="78">MAY 15</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="79">MAY 16</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="80">MAY 17</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="81">MAY 18</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="82">MAY 19</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="83">MAY 20</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="84">MAY 21</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="85">MAY 22</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="86">MAY 23</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="87">MAY 24</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="88">MAY 25</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="89">MAY 26</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="90">MAY 27</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="91">MAY 28</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="92">MAY 29</div>
+                                <div class="timeline-cell bg-[#131313] border-b border-[#333]" data-sd-id="93">MAY 30</div>
+                            </template>
+                            <!-- Script fills header -->
+
+                            <!-- Row 1: Toughbook FZ-55 -->
+                            <div class="timeline-cell bg-[#161616] border-b border-[#333] sticky left-0 z-30 justify-start px-5 text-white uppercase tracking-tight" data-sd-id="94">#LT-7729-A</div>
+                            <div class="relative col-span-30 h-12 border-b border-[#333]" data-sd-id="95">
+                                <!-- Booking 1 -->
+                                <div class="booking-block bg-teal-500/10 border-teal-500/30 text-teal-400" style="left: 0px; width: 400px;" data-sd-id="96">
+                                    <span class="truncate" data-sd-id="97">#BK-901 / Marcus V. (Ongoing)</span>
+                                </div>
+                                <!-- Conflict 1 (Overlap) -->
+                                <div class="booking-block bg-red-500/10 border-red-500/50 text-red-500" style="left: 320px; width: 320px;" data-sd-id="98">
+                                    <span class="truncate" data-sd-id="99">#BK-992 / Sarah C. (Conflict)</span>
+                                </div>
+                                <div class="conflict-overlay" style="left: 320px; width: 80px;" data-sd-id="100">
+                                    <iconify-icon icon="lucide:alert-triangle" class="text-red-500 text-lg"></iconify-icon>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: DJI Matrice Drone -->
+                            <div class="timeline-cell bg-[#161616] border-b border-[#333] sticky left-0 z-30 justify-start px-5 text-white uppercase tracking-tight" data-sd-id="101">#DR-09-AIR</div>
+                            <div class="relative col-span-30 h-12 border-b border-[#333]" data-sd-id="102">
+                                <div class="booking-block bg-blue-500/10 border-blue-500/30 text-blue-400" style="left: 800px; width: 480px;" data-sd-id="103">
+                                    <span class="truncate" data-sd-id="104">#BK-1052 / Field-Unit-B (Upcoming)</span>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Forklift G-12 -->
+                            <div class="timeline-cell bg-[#161616] border-b border-[#333] sticky left-0 z-30 justify-start px-5 text-white uppercase tracking-tight" data-sd-id="105">#VEH-12-G</div>
+                            <div class="relative col-span-30 h-12 border-b border-[#333]" data-sd-id="106">
+                                <div class="booking-block bg-green-500/10 border-green-500/30 text-green-400" style="left: 80px; width: 240px;" data-sd-id="107">
+                                    <span class="truncate" data-sd-id="108">#BK-882 / Logistics (Completed)</span>
+                                </div>
+                                <div class="booking-block bg-teal-500/10 border-teal-500/30 text-teal-400" style="left: 480px; width: 640px;" data-sd-id="109">
+                                    <span class="truncate" data-sd-id="110">#BK-912 / Warehouse-A (Ongoing)</span>
+                                </div>
+                            </div>
+
+                             <!-- Row 4: Power Hammer P1 -->
+                             <div class="timeline-cell bg-[#161616] border-b border-[#333] sticky left-0 z-30 justify-start px-5 text-white uppercase tracking-tight" data-sd-id="111">#PWR-P1</div>
+                             <div class="relative col-span-30 h-12 border-b border-[#333]" data-sd-id="112">
+                                 <div class="booking-block bg-gray-500/10 border-gray-500/30 text-gray-500" style="left: 1200px; width: 160px;" data-sd-id="113">
+                                     <span class="truncate" data-sd-id="114">#BK-1100 / Maintenance (Cancelled)</span>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Creation & Conflict Summary -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-sd-id="115">
+                    
+                    <!-- Left: Request Form (2/3) -->
+                    <div class="lg:col-span-2 space-y-6" data-sd-id="116">
+                        <div class="bg-[#161616] industrial-border" data-sd-id="117">
+                            <div class="px-5 py-4 border-b border-[#333] bg-[#1a1a1a]" data-sd-id="118">
+                                <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="119">New Reservation Request</h3>
+                            </div>
+                            
+                            <form onsubmit="return false;" class="p-6 space-y-6" data-sd-id="120">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-sd-id="121">
+                                    <!-- Resource Selection -->
+                                    <div class="space-y-1.5" data-sd-id="122">
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="123">Select Target Resource</label>
+                                        <select class="input-field appearance-none" data-sd-id="124">
+                                            <option data-sd-id="125">#LT-7729-A (Panasonic Toughbook)</option>
+                                            <option data-sd-id="126">#DR-09-AIR (DJI Matrice Drone)</option>
+                                            <option data-sd-id="127">#VEH-12-G (Forklift G-12)</option>
+                                            <option data-sd-id="128">#PWR-P1 (Power Hammer P1)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Requestor Email -->
+                                    <div class="space-y-1.5" data-sd-id="129">
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="130">Requestor Identifier (Email)</label>
+                                        <input type="email" class="input-field" placeholder="employee@assetflow.corp" value="s.chen@assetflow.corp" data-sd-id="131">
+                                    </div>
+
+                                    <!-- Start Date -->
+                                    <div class="space-y-1.5" data-sd-id="132">
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="133">Start Timestamp</label>
+                                        <input type="datetime-local" class="input-field mono" value="2024-05-04T09:00" data-sd-id="134">
+                                    </div>
+
+                                    <!-- End Date -->
+                                    <div class="space-y-1.5" data-sd-id="135">
+                                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="136">End Timestamp</label>
+                                        <input type="datetime-local" class="input-field mono" value="2024-05-06T18:00" data-sd-id="137">
+                                    </div>
+                                </div>
+
+                                <!-- Purpose -->
+                                <div class="space-y-1.5" data-sd-id="138">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="139">Project Scope / Purpose of Reservation</label>
+                                    <textarea class="input-field min-h-[100px] resize-none" placeholder="Enter detailed operational purpose for this equipment reservation..." data-sd-id="140"></textarea>
+                                </div>
+
+                                <div class="pt-4 border-t border-[#333] flex justify-between items-center" data-sd-id="141">
+                                    <div class="flex items-center gap-2 text-[10px] text-gray-500" data-sd-id="142">
+                                        <iconify-icon icon="lucide:info" class="text-[#10b981]"></iconify-icon>
+                                        <span data-sd-id="143">Automated validation will be performed on submission.</span>
+                                    </div>
+                                    <div class="flex gap-3" data-sd-id="144">
+                                        <button class="btn-secondary" data-sd-id="145">Discard</button>
+                                        <button id="submit-booking-btn" class="btn-primary" data-sd-id="146">Initialize Booking</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Right: Conflict Summary (1/3) -->
+                    <div class="space-y-6" data-sd-id="147">
+                        <div class="bg-[#161616] industrial-border" data-sd-id="148">
+                            <div class="px-5 py-4 border-b border-[#333] bg-[#1a1a1a]" data-sd-id="149">
+                                <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="150">Conflict Detection Report</h3>
+                            </div>
+                            <div class="p-5 space-y-4" data-sd-id="151">
+                                <div class="flex items-center gap-3 p-3 bg-red-500/5 border border-red-500/20 rounded-[2px]" data-sd-id="152">
+                                    <iconify-icon icon="lucide:shield-alert" class="text-red-500 text-xl"></iconify-icon>
+                                    <div data-sd-id="153">
+                                        <p class="text-[10px] font-bold text-white uppercase" data-sd-id="154">Critical Overlap</p>
+                                        <p class="text-[9px] text-gray-500 mt-0.5" data-sd-id="155">MAY 05 Detected as Over-Allocated for #LT-7729-A</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3" data-sd-id="156">
+                                    <div class="p-3 bg-[#131313] border border-[#333]" data-sd-id="157">
+                                        <div class="flex justify-between items-center mb-1" data-sd-id="158">
+                                            <span class="text-[9px] font-bold text-gray-500 uppercase" data-sd-id="159">Existing Booking</span>
+                                            <span class="status-pill bg-teal-500/10 text-teal-400 border border-teal-500/20" data-sd-id="160">Ongoing</span>
+                                        </div>
+                                        <p class="text-[11px] font-bold text-white" data-sd-id="161">#BK-901 / Marcus Vance</p>
+                                        <p class="text-[9px] mono text-gray-500 mt-1 uppercase" data-sd-id="162">Ends: 2024-05-05 17:00</p>
+                                    </div>
+
+                                    <div class="p-3 bg-[#131313] border border-red-500/30" data-sd-id="163">
+                                        <div class="flex justify-between items-center mb-1" data-sd-id="164">
+                                            <span class="text-[9px] font-bold text-gray-500 uppercase" data-sd-id="165">Rejected Overlap</span>
+                                            <span class="status-pill bg-red-500/10 text-red-500 border border-red-500/20" data-sd-id="166">Conflict</span>
+                                        </div>
+                                        <p class="text-[11px] font-bold text-white" data-sd-id="167">#BK-992 / Sarah Chen</p>
+                                        <p class="text-[9px] mono text-gray-500 mt-1 uppercase" data-sd-id="168">Starts: 2024-05-04 08:00</p>
+                                    </div>
+                                </div>
+
+                                <div class="pt-4 border-t border-[#333]" data-sd-id="169">
+                                    <button class="w-full btn-secondary text-center" data-sd-id="170">View Full Discrepancy Log</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#161616] industrial-border p-5" data-sd-id="171">
+                            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3" data-sd-id="172">Scheduling Health</h4>
+                            <div class="flex items-end gap-3 mb-2" data-sd-id="173">
+                                <span class="text-3xl font-extrabold mono text-white" data-sd-id="174">92%</span>
+                                <span class="text-[10px] text-[#10b981] font-bold uppercase mb-1" data-sd-id="175">Efficiency</span>
+                            </div>
+                            <div class="w-full bg-[#333] h-1 rounded-full overflow-hidden" data-sd-id="176">
+                                <div class="bg-[#10b981] h-full w-[92%]" data-sd-id="177"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Sticky Footer -->
+            <footer class="h-10 industrial-border border-t border-x-0 border-b-0 bg-[#161616] flex items-center justify-between px-6 z-40" data-sd-id="178">
+                <div class="flex gap-4" data-sd-id="179">
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="180">AssetFlow v4.2.0-PROD</span>
+                    <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest px-2 border-l border-[#333]" data-sd-id="181">Timeline: 30-DAY WINDOW</span>
+                </div>
+                <div class="flex gap-6 items-center" data-sd-id="182">
+                    <span class="flex items-center gap-1.5 text-[9px] font-bold text-[#10b981] uppercase" data-sd-id="183">
+                        <span class="w-1.5 h-1.5 bg-[#10b981] rounded-full animate-pulse" data-sd-id="184"></span>
+                        Sync Synchronized
+                    </span>
+                    <span class="text-[9px] font-bold text-gray-400 uppercase tabular-nums tracking-wider" data-sd-id="185">15:42:09 UTC</span>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+    <script>
+        // Populate Timeline Headers
+        const grid = document.querySelector('.timeline-grid');
+        const headerCells = [];
+        for (let i = 1; i <= 30; i++) {
+            const dayStr = i < 10 ? `0${i}` : i;
+            const cell = document.createElement('div');
+            cell.className = 'timeline-cell bg-[#131313] border-b border-[#333]';
+            cell.innerText = `MAY ${dayStr}`;
+            headerCells.push(cell);
+        }
+        // Insert after the first header cell
+        grid.insertBefore(headerCells[0], grid.children[1]);
+        for(let i=1; i<headerCells.length; i++) {
+            grid.insertBefore(headerCells[i], headerCells[i-1].nextSibling);
+        }
+
+        // Simple Notification Logic
+        const submitBtn = document.getElementById('submit-booking-btn');
+        submitBtn.addEventListener('click', () => {
+            alert('Booking request submitted. System is verifying resource availability and compliance policies.');
+        });
+    </script>
+
+</body></html>

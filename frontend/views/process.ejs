@@ -1,0 +1,450 @@
+<!DOCTYPE html><html lang="en" class="scroll-smooth"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetFlow ERP | Process Flow Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --charcoal: #0a0a0a;
+            --graphite: #161616;
+            --teal-accent: #10b981;
+            --border-gray: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background-color: var(--charcoal);
+            color: #e5e5e5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .industrial-border {
+            border: 1px solid var(--border-gray);
+        }
+
+        /* 3D Scene Config */
+        .perspective-scene {
+            perspective: 1200px;
+        }
+
+        .flow-container {
+            transform-style: preserve-3d;
+            transform: rotateX(15deg) rotateY(-5deg);
+            transition: transform 0.5s ease;
+        }
+
+        .flow-container:hover {
+            transform: rotateX(10deg) rotateY(0deg);
+        }
+
+        .node-card {
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .node-card:hover {
+            transform: translateZ(20px);
+        }
+
+        .node-glow {
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+
+        .line-animate {
+            stroke-dasharray: 10;
+            animation: dash 30s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -1000; }
+        }
+
+        .pulse-active {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--charcoal); }
+        ::-webkit-scrollbar-thumb { background: var(--border-gray); border-radius: 0px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--teal-accent); }
+    </style>
+</head>
+<body class="overflow-hidden">
+    <!-- Root Container -->
+    <div class="flex h-screen overflow-hidden bg-[#0a0a0a]" data-sd-id="1">
+        
+        <!-- Persistent Sidebar Nav -->
+        <aside id="sidebar" class="w-64 industrial-border border-r border-y-0 border-l-0 bg-[#0f0f0f] flex flex-col z-50" data-sd-id="2">
+            <div class="p-5 flex items-center gap-3 border-b border-[#222]" data-sd-id="3">
+                <div class="w-8 h-8 bg-[#10b981] flex items-center justify-center rounded-[2px] shrink-0" data-sd-id="4">
+                    <iconify-icon icon="lucide:boxes" class="text-xl text-white"></iconify-icon>
+                </div>
+                <div class="overflow-hidden whitespace-nowrap" data-sd-id="5">
+                    <h1 class="text-sm font-bold uppercase tracking-widest text-white" data-sd-id="6">AssetFlow</h1>
+                    <p class="text-[10px] text-gray-500 font-semibold tracking-tighter uppercase" data-sd-id="7">Operations / Central-01</p>
+                </div>
+            </div>
+
+            <nav class="flex-1 py-4 overflow-y-auto" data-sd-id="8">
+                <div class="px-4 mb-2" data-sd-id="9">
+                    <span class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]" data-sd-id="10">Management</span>
+                </div>
+               <ul class="space-y-1 px-2" data-sd-id="11">
+    <li data-sd-id="12">
+        <a href="/terminal" id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#161616] rounded-[2px] transition-colors group" data-sd-id="13">
+            <iconify-icon icon="lucide:layout-dashboard" class="text-lg"></iconify-icon>
+            <span data-sd-id="14">Operational Dashboard</span>
+        </a>
+    </li>
+    <li data-sd-id="15">
+        <a href="/process" id="nav-visuals" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[#10b981] bg-[#161616] rounded-[2px] group" data-sd-id="16">
+            <iconify-icon icon="lucide:cable" class="text-lg"></iconify-icon>
+            <span data-sd-id="17">Process Visualization</span>
+        </a>
+    </li>
+    <li data-sd-id="18">
+        <a href="/directory" id="nav-inventory" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#161616] rounded-[2px] transition-colors group" data-sd-id="19">
+            <iconify-icon icon="lucide:database" class="text-lg"></iconify-icon>
+            <span data-sd-id="20">Asset Directory</span>
+        </a>
+    </li>
+    <li>
+        <a href="/resources-1" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#161616] rounded-[2px] transition-colors group">
+            <iconify-icon icon="lucide:arrow-left-right" class="text-lg"></iconify-icon>
+            <span>Resource Allocations</span>
+        </a>
+    </li>
+    <li>
+        <a href="/resources-2" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#161616] rounded-[2px] transition-colors group">
+            <iconify-icon icon="lucide:calendar-clock" class="text-lg"></iconify-icon>
+            <span>Resource Booking</span>
+        </a>
+    </li>
+</ul>
+            </nav>
+
+            <div class="p-4 border-t border-[#222] bg-[#0a0a0a]" data-sd-id="21">
+                <div class="flex items-center justify-between mb-2" data-sd-id="22">
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-tighter" data-sd-id="23">Sync Integrity</span>
+                    <span class="text-[9px] font-bold text-[#10b981] uppercase" data-sd-id="24">Optimal</span>
+                </div>
+                <div class="w-full bg-[#222] h-1 rounded-full overflow-hidden" data-sd-id="25">
+                    <div class="bg-[#10b981] h-full w-[99.2%]" data-sd-id="26"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col relative overflow-hidden" data-sd-id="27">
+            
+            <!-- Top Navbar -->
+            <header class="h-16 industrial-border border-b border-x-0 border-t-0 bg-[#0f0f0f] flex items-center justify-between px-6 z-40" data-sd-id="28">
+                <div class="flex items-center gap-6" data-sd-id="29">
+                    <div class="flex flex-col" data-sd-id="30">
+                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1" data-sd-id="31">Telemetry Module</span>
+                        <span class="text-xs font-semibold text-white uppercase tracking-tight" data-sd-id="32">System Operational Lifecycle</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-5" data-sd-id="33">
+                    <!-- Global Metrics Overlay -->
+                    <div class="hidden xl:flex items-center gap-6 pr-6 border-r border-[#222]" data-sd-id="34">
+                        <div class="flex flex-col" data-sd-id="35">
+                            <span class="text-[9px] font-bold text-gray-500 uppercase" data-sd-id="36">Success Rate</span>
+                            <span class="text-xs font-extrabold text-[#10b981] mono" data-sd-id="37">99.2%</span>
+                        </div>
+                        <div class="flex flex-col" data-sd-id="38">
+                            <span class="text-[9px] font-bold text-gray-500 uppercase" data-sd-id="39">Avg. Transfer</span>
+                            <span class="text-xs font-extrabold text-blue-400 mono" data-sd-id="40">1.2 HR</span>
+                        </div>
+                        <div class="flex flex-col" data-sd-id="41">
+                            <span class="text-[9px] font-bold text-gray-500 uppercase" data-sd-id="42">Active TX</span>
+                            <span class="text-xs font-extrabold text-amber-500 mono" data-sd-id="43">42 Units</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3" data-sd-id="44">
+                        <button id="user-menu-btn" class="flex items-center gap-3 group" data-sd-id="45">
+                            <div class="text-right" data-sd-id="46">
+                                <p class="text-[10px] font-bold text-white uppercase leading-none" data-sd-id="47">A. Miller</p>
+                                <p class="text-[8px] text-gray-500 font-semibold uppercase" data-sd-id="48">Ops Lead</p>
+                            </div>
+                            <div class="w-8 h-8 bg-[#222] rounded-[2px] flex items-center justify-center group-hover:bg-[#333] transition-colors" data-sd-id="49">
+                                <iconify-icon icon="lucide:user" class="text-lg text-gray-300"></iconify-icon>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Visualization Content -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-10" data-sd-id="50">
+                
+                <!-- Main 3D Lifecycle Flow -->
+                <section class="bg-[#0f0f0f] industrial-border p-12 min-h-[500px] flex flex-col justify-center relative perspective-scene overflow-hidden" data-sd-id="51">
+                    <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 40px 40px;" data-sd-id="52"></div>
+                    
+                    <div class="mb-12 relative z-10 text-center" data-sd-id="53">
+                        <h2 class="text-xs font-bold text-gray-500 uppercase tracking-[0.3em] mb-2" data-sd-id="54">Master Asset Lifecycle Pipeline</h2>
+                        <div class="h-px w-24 bg-[#10b981] mx-auto" data-sd-id="55"></div>
+                    </div>
+
+                    <!-- Flow Engine (SVG Connections + 3D Cards) -->
+                    <div class="relative w-full max-w-6xl mx-auto flow-container py-10" data-sd-id="56">
+                        <!-- SVG Paths (Curves) -->
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible z-0" viewBox="0 0 1000 200" data-sd-id="57">
+                            <defs>
+                                <linearGradient id="grad-available" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#10b981; stop-opacity:0.2"></stop>
+                                    <stop offset="100%" style="stop-color:#3b82f6; stop-opacity:0.2"></stop>
+                                </linearGradient>
+                            </defs>
+                            <!-- Connecting Curves -->
+                            <path d="M120,100 Q200,50 280,100" fill="none" stroke="url(#grad-available)" stroke-width="2" class="line-animate"></path>
+                            <path d="M360,100 Q440,150 520,100" fill="none" stroke="#3b82f6" stroke-opacity="0.2" stroke-width="2" class="line-animate"></path>
+                            <path d="M600,100 Q680,50 760,100" fill="none" stroke="#f59e0b" stroke-opacity="0.2" stroke-width="2" class="line-animate"></path>
+                            <path d="M840,100 Q920,150 960,100" fill="none" stroke="#ef4444" stroke-opacity="0.2" stroke-width="2" class="line-animate"></path>
+                        </svg>
+
+                        <!-- Node Cards -->
+                        <div class="flex justify-between items-center relative z-10 gap-4" data-sd-id="58">
+                            <!-- Node 1: Register -->
+                            <div class="node-card w-44 bg-[#1a1a1a] industrial-border p-5 text-center shadow-xl border-l-4 border-l-[#10b981]" data-sd-id="59">
+                                <div class="w-10 h-10 bg-[#10b981]/10 text-[#10b981] mx-auto mb-3 flex items-center justify-center rounded-[2px] node-glow" data-sd-id="60">
+                                    <iconify-icon icon="lucide:plus-square" class="text-xl"></iconify-icon>
+                                </div>
+                                <h4 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="61">Register</h4>
+                                <p class="text-[8px] text-gray-500 mt-1 uppercase" data-sd-id="62">Site Acquisition</p>
+                                <div class="mt-4 text-xs font-extrabold mono text-[#10b981]" data-sd-id="63">14 NEW</div>
+                            </div>
+
+                            <!-- Node 2: Allocate -->
+                            <div class="node-card w-44 bg-[#1a1a1a] industrial-border p-5 text-center shadow-xl border-l-4 border-l-blue-500 pulse-active" data-sd-id="64">
+                                <div class="w-10 h-10 bg-blue-500/10 text-blue-500 mx-auto mb-3 flex items-center justify-center rounded-[2px] node-glow" data-sd-id="65">
+                                    <iconify-icon icon="lucide:user-plus" class="text-xl"></iconify-icon>
+                                </div>
+                                <h4 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="66">Allocate</h4>
+                                <p class="text-[8px] text-gray-500 mt-1 uppercase" data-sd-id="67">Personnel Assignment</p>
+                                <div class="mt-4 text-xs font-extrabold mono text-blue-500" data-sd-id="68">28 PENDING</div>
+                            </div>
+
+                            <!-- Node 3: In-Use -->
+                            <div class="node-card w-44 bg-[#1a1a1a] industrial-border p-5 text-center shadow-xl border-l-4 border-l-cyan-500" data-sd-id="69">
+                                <div class="w-10 h-10 bg-cyan-500/10 text-cyan-500 mx-auto mb-3 flex items-center justify-center rounded-[2px] node-glow" data-sd-id="70">
+                                    <iconify-icon icon="lucide:play" class="text-xl"></iconify-icon>
+                                </div>
+                                <h4 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="71">In-Use</h4>
+                                <p class="text-[8px] text-gray-500 mt-1 uppercase" data-sd-id="72">Field Operations</p>
+                                <div class="mt-4 text-xs font-extrabold mono text-cyan-500" data-sd-id="73">3.2k ACTIVE</div>
+                            </div>
+
+                            <!-- Node 4: Transfer -->
+                            <div class="node-card w-44 bg-[#1a1a1a] industrial-border p-5 text-center shadow-xl border-l-4 border-l-amber-500" data-sd-id="74">
+                                <div class="w-10 h-10 bg-amber-500/10 text-amber-500 mx-auto mb-3 flex items-center justify-center rounded-[2px] node-glow" data-sd-id="75">
+                                    <iconify-icon icon="lucide:arrow-right-left" class="text-xl"></iconify-icon>
+                                </div>
+                                <h4 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="76">Transfer</h4>
+                                <p class="text-[8px] text-gray-500 mt-1 uppercase" data-sd-id="77">Conflict Resolve</p>
+                                <div class="mt-4 text-xs font-extrabold mono text-amber-500" data-sd-id="78">42 REQUESTS</div>
+                            </div>
+
+                            <!-- Node 5: Return -->
+                            <div class="node-card w-44 bg-[#1a1a1a] industrial-border p-5 text-center shadow-xl border-l-4 border-l-red-500" data-sd-id="79">
+                                <div class="w-10 h-10 bg-red-500/10 text-red-500 mx-auto mb-3 flex items-center justify-center rounded-[2px] node-glow" data-sd-id="80">
+                                    <iconify-icon icon="lucide:check-circle" class="text-xl"></iconify-icon>
+                                </div>
+                                <h4 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="81">Return</h4>
+                                <p class="text-[8px] text-gray-500 mt-1 uppercase" data-sd-id="82">Cycle Complete</p>
+                                <div class="mt-4 text-xs font-extrabold mono text-red-500" data-sd-id="83">1.8k TODAY</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Detailed Modern Flow Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" data-sd-id="84">
+                    
+                    <!-- 1) Asset Movement Flow -->
+                    <div class="bg-[#0f0f0f] industrial-border flex flex-col" data-sd-id="85">
+                        <div class="px-5 py-3 border-b border-[#222] bg-[#161616] flex justify-between items-center" data-sd-id="86">
+                            <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="87">Global Logistics Path</h3>
+                            <iconify-icon icon="lucide:box" class="text-gray-600"></iconify-icon>
+                        </div>
+                        <div class="p-6 space-y-6" data-sd-id="88">
+                            <div class="flex items-center gap-4" data-sd-id="89">
+                                <div class="w-10 h-10 industrial-border flex flex-col items-center justify-center" data-sd-id="90">
+                                    <span class="text-[10px] font-bold text-white mono" data-sd-id="91">HUB</span>
+                                </div>
+                                <div class="flex-1 h-px bg-[#222] relative" data-sd-id="92">
+                                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 text-[8px] text-gray-600 font-bold uppercase tracking-widest" data-sd-id="93">Inbound</div>
+                                    <div class="absolute right-0 -top-[3px] w-1.5 h-1.5 bg-[#10b981] rounded-full" data-sd-id="94"></div>
+                                </div>
+                                <div class="w-10 h-10 industrial-border flex flex-col items-center justify-center border-[#10b981]" data-sd-id="95">
+                                    <span class="text-[10px] font-bold text-white mono" data-sd-id="96">WHS</span>
+                                </div>
+                                <div class="flex-1 h-px bg-[#222] relative" data-sd-id="97">
+                                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 text-[8px] text-gray-600 font-bold uppercase tracking-widest" data-sd-id="98">Deploy</div>
+                                    <div class="absolute right-0 -top-[3px] w-1.5 h-1.5 bg-blue-500 rounded-full" data-sd-id="99"></div>
+                                </div>
+                                <div class="w-10 h-10 industrial-border flex flex-col items-center justify-center" data-sd-id="100">
+                                    <span class="text-[10px] font-bold text-white mono" data-sd-id="101">FLD</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center" data-sd-id="102">
+                                <div class="flex flex-col" data-sd-id="103">
+                                    <span class="text-[9px] text-gray-500 uppercase" data-sd-id="104">Input</span>
+                                    <span class="text-sm font-bold mono" data-sd-id="105">428</span>
+                                </div>
+                                <div class="flex flex-col" data-sd-id="106">
+                                    <span class="text-[9px] text-gray-500 uppercase" data-sd-id="107">Stock</span>
+                                    <span class="text-sm font-bold mono text-[#10b981]" data-sd-id="108">1,204</span>
+                                </div>
+                                <div class="flex flex-col" data-sd-id="109">
+                                    <span class="text-[9px] text-gray-500 uppercase" data-sd-id="110">Active</span>
+                                    <span class="text-sm font-bold mono text-blue-500" data-sd-id="111">882</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2) Approval Workflow -->
+                    <div class="bg-[#0f0f0f] industrial-border flex flex-col" data-sd-id="112">
+                        <div class="px-5 py-3 border-b border-[#222] bg-[#161616] flex justify-between items-center" data-sd-id="113">
+                            <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="114">TX Approval Chain</h3>
+                            <iconify-icon icon="lucide:shield-check" class="text-gray-600"></iconify-icon>
+                        </div>
+                        <div class="p-6 relative" data-sd-id="115">
+                            <div class="space-y-4" data-sd-id="116">
+                                <div class="flex items-center gap-3" data-sd-id="117">
+                                    <div class="w-5 h-5 bg-[#10b981]/20 text-[#10b981] flex items-center justify-center rounded-[2px] text-[10px] font-bold" data-sd-id="118">1</div>
+                                    <div class="flex-1 flex justify-between items-center bg-[#161616] border border-[#222] px-3 py-2" data-sd-id="119">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter" data-sd-id="120">Request Initialized</span>
+                                        <span class="text-[9px] mono text-gray-600" data-sd-id="121">0s</span>
+                                    </div>
+                                </div>
+                                <div class="ml-2.5 h-3 w-px bg-[#222]" data-sd-id="122"></div>
+                                <div class="flex items-center gap-3" data-sd-id="123">
+                                    <div class="w-5 h-5 bg-amber-500/20 text-amber-500 flex items-center justify-center rounded-[2px] text-[10px] font-bold" data-sd-id="124">2</div>
+                                    <div class="flex-1 flex justify-between items-center bg-[#161616] border border-[#222] px-3 py-2" data-sd-id="125">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter" data-sd-id="126">Manager Review</span>
+                                        <span class="text-[9px] mono text-amber-500 font-bold" data-sd-id="127">42m</span>
+                                    </div>
+                                </div>
+                                <div class="ml-2.5 h-3 w-px bg-[#222]" data-sd-id="128"></div>
+                                <div class="flex items-center gap-3" data-sd-id="129">
+                                    <div class="w-5 h-5 bg-blue-500/20 text-blue-500 flex items-center justify-center rounded-[2px] text-[10px] font-bold" data-sd-id="130">3</div>
+                                    <div class="flex-1 flex justify-between items-center bg-[#161616] border border-blue-500/30 px-3 py-2" data-sd-id="131">
+                                        <span class="text-[10px] font-bold text-white uppercase tracking-tighter" data-sd-id="132">Transfer Executing</span>
+                                        <span class="text-[9px] mono text-blue-400 font-bold" data-sd-id="133">1.2h</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3) Maintenance Cycle -->
+                    <div class="bg-[#0f0f0f] industrial-border flex flex-col" data-sd-id="134">
+                        <div class="px-5 py-3 border-b border-[#222] bg-[#161616] flex justify-between items-center" data-sd-id="135">
+                            <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="136">Asset Integrity Loop</h3>
+                            <iconify-icon icon="lucide:refresh-cw" class="text-gray-600"></iconify-icon>
+                        </div>
+                        <div class="p-6 flex flex-col items-center" data-sd-id="137">
+                            <div class="relative w-32 h-32 flex items-center justify-center" data-sd-id="138">
+                                <svg class="absolute inset-0 w-full h-full rotate-[-90deg]" viewBox="0 0 100 100" data-sd-id="139">
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#222" stroke-width="2"></circle>
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="283" stroke-dashoffset="70" stroke-linecap="square"></circle>
+                                </svg>
+                                <div class="text-center" data-sd-id="140">
+                                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest leading-none mb-1" data-sd-id="141">Health</p>
+                                    <p class="text-xl font-extrabold text-white mono" data-sd-id="142">75%</p>
+                                </div>
+                                <!-- Micro Nodes on the circle -->
+                                <div class="absolute top-0 w-2 h-2 bg-[#10b981] rounded-full border border-[#0f0f0f]" data-sd-id="143"></div>
+                                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full border border-[#0f0f0f]" data-sd-id="144"></div>
+                                <div class="absolute bottom-0 w-2 h-2 bg-gray-500 rounded-full border border-[#0f0f0f]" data-sd-id="145"></div>
+                                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-orange-500 rounded-full border border-[#0f0f0f]" data-sd-id="146"></div>
+                            </div>
+                            <div class="mt-6 flex gap-4" data-sd-id="147">
+                                <div class="text-center" data-sd-id="148">
+                                    <p class="text-[8px] text-gray-600 uppercase font-bold" data-sd-id="149">Schedule</p>
+                                    <div class="w-1.5 h-1.5 bg-[#10b981] rounded-full mx-auto mt-1" data-sd-id="150"></div>
+                                </div>
+                                <div class="text-center" data-sd-id="151">
+                                    <p class="text-[8px] text-gray-600 uppercase font-bold" data-sd-id="152">Perform</p>
+                                    <div class="w-1.5 h-1.5 bg-blue-500 rounded-full mx-auto mt-1" data-sd-id="153"></div>
+                                </div>
+                                <div class="text-center" data-sd-id="154">
+                                    <p class="text-[8px] text-gray-600 uppercase font-bold" data-sd-id="155">Validate</p>
+                                    <div class="w-1.5 h-1.5 bg-orange-500 rounded-full mx-auto mt-1" data-sd-id="156"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Stats Context -->
+                <div class="bg-[#161616] industrial-border p-5 grid grid-cols-2 lg:grid-cols-4 gap-8" data-sd-id="157">
+                    <div class="flex flex-col" data-sd-id="158">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1" data-sd-id="159">Asset Turnover Rate</span>
+                        <div class="flex items-baseline gap-2" data-sd-id="160">
+                            <span class="text-2xl font-extrabold text-white mono" data-sd-id="161">14.2</span>
+                            <span class="text-[9px] text-[#10b981] font-bold" data-sd-id="162">DAYS</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col" data-sd-id="163">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1" data-sd-id="164">System Latency</span>
+                        <div class="flex items-baseline gap-2" data-sd-id="165">
+                            <span class="text-2xl font-extrabold text-white mono" data-sd-id="166">42</span>
+                            <span class="text-[9px] text-blue-400 font-bold" data-sd-id="167">MS</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col" data-sd-id="168">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1" data-sd-id="169">Global Site Availability</span>
+                        <div class="flex items-baseline gap-2" data-sd-id="170">
+                            <span class="text-2xl font-extrabold text-white mono" data-sd-id="171">98.4%</span>
+                            <span class="text-[9px] text-[#10b981] font-bold" data-sd-id="172">UP</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col" data-sd-id="173">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1" data-sd-id="174">Logistics Overhead</span>
+                        <div class="flex items-baseline gap-2" data-sd-id="175">
+                            <span class="text-2xl font-extrabold text-white mono" data-sd-id="176">4.2%</span>
+                            <span class="text-[9px] text-orange-400 font-bold" data-sd-id="177">TARGET</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Sticky Footer -->
+            <footer class="h-10 industrial-border border-t border-x-0 border-b-0 bg-[#0f0f0f] flex items-center justify-between px-6 z-40" data-sd-id="178">
+                <div class="flex gap-4" data-sd-id="179">
+                    <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest" data-sd-id="180">AssetFlow v4.2.0-PROD</span>
+                    <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest px-2 border-l border-[#222]" data-sd-id="181">Flow Analysis Engine</span>
+                </div>
+                <div class="flex gap-6 items-center" data-sd-id="182">
+                    <span class="flex items-center gap-1.5 text-[9px] font-bold text-[#10b981] uppercase" data-sd-id="183">
+                        <span class="w-1.5 h-1.5 bg-[#10b981] rounded-full" data-sd-id="184"></span>
+                        LIVE Telemetry
+                    </span>
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tabular-nums tracking-wider" data-sd-id="185">16:04:22 UTC</span>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+</body></html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetFlow | Enterprise Asset &amp; Resource Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f5;
+            -webkit-font-smoothing: antialiased;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        /* Custom UI States */
+        .input-field {
+            @apply w-full bg-white border border-[#cccccc] px-3 py-2 text-sm focus:outline-none focus:border-[#10b981] transition-colors rounded-[2px];
+        }
+        .btn-primary {
+            @apply bg-[#10b981] hover:bg-[#0d9469] text-white font-semibold py-2.5 px-4 text-sm transition-all rounded-[2px] uppercase tracking-wider active:transform active:scale-[0.98];
+        }
+        .tab-active {
+            @apply border-b-2 border-[#10b981] text-[#1a1a1a] font-semibold;
+        }
+        .tab-inactive {
+            @apply text-gray-500 hover:text-gray-700 hover:bg-gray-100;
+        }
+        /* Hide scrollbars for clean industrial look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 0px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Root Container -->
+    <div class="min-h-screen flex flex-col md:flex-row overflow-hidden" data-sd-id="1">
+        
+        <!-- Left Branding Panel (40%) -->
+        <section class="w-full md:w-[40%] bg-[#1a1a1a] p-10 lg:p-16 flex flex-col justify-between relative overflow-hidden" data-sd-id="2">
+            <!-- Background Decorative Grid (Subtle Industrial Aesthetic) -->
+            <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;" data-sd-id="3"></div>
+            
+            <div class="relative z-10" data-sd-id="4">
+                <div class="flex items-center gap-3 mb-12" data-sd-id="5">
+                    <div class="w-10 h-10 bg-[#10b981] flex items-center justify-center rounded-[2px]" data-sd-id="6">
+                        <iconify-icon icon="lucide:boxes" class="text-2xl text-white"></iconify-icon>
+                    </div>
+                    <h1 class="text-3xl font-extrabold text-white tracking-tighter uppercase" data-sd-id="7">AssetFlow</h1>
+                </div>
+                
+                <div class="max-w-md" data-sd-id="8">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6" data-sd-id="9">
+                        Enterprise <br>
+                        <span class="text-[#10b981]" data-sd-id="10">Asset</span> &amp; Resource <br>
+                        Management
+                    </h2>
+                    <p class="text-gray-400 text-lg leading-relaxed font-light" data-sd-id="11">
+                        Precision logistics and inventory control for modern industrial operations. Secure, scalable, and audit-ready.
+                    </p>
+                </div>
+            </div>
+
+            <div class="relative z-10 flex flex-col gap-4" data-sd-id="12">
+                <div class="flex items-center gap-4 text-xs text-gray-500 uppercase tracking-[0.2em] font-semibold" data-sd-id="13">
+                    <span class="w-8 h-px bg-gray-700" data-sd-id="14"></span>
+                    Operational Intelligence Unit
+                </div>
+                <div class="flex gap-6 mt-2" data-sd-id="15">
+                    <div class="flex flex-col" data-sd-id="16">
+                        <span class="text-white text-xl font-bold tabular-nums" data-sd-id="17">4.2M</span>
+                        <span class="text-[10px] text-gray-500 uppercase" data-sd-id="18">Assets Tracked</span>
+                    </div>
+                    <div class="flex flex-col" data-sd-id="19">
+                        <span class="text-white text-xl font-bold tabular-nums" data-sd-id="20">18.5k</span>
+                        <span class="text-[10px] text-gray-500 uppercase" data-sd-id="21">Global Nodes</span>
+                    </div>
+                    <div class="flex flex-col" data-sd-id="22">
+                        <span class="text-white text-xl font-bold tabular-nums" data-sd-id="23">99.9%</span>
+                        <span class="text-[10px] text-gray-500 uppercase" data-sd-id="24">Uptime SLA</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Form Panel (60%) -->
+        <section class="w-full md:w-[60%] bg-[#f5f5f5] flex items-center justify-center p-6 lg:p-12 relative" data-sd-id="25">
+            
+            <!-- Form Container -->
+            <div class="w-full max-w-[480px] bg-white border border-[#e5e5e5] p-0 shadow-sm" data-sd-id="26">
+                
+                <!-- Form Tabs -->
+                <div class="flex border-b border-[#e5e5e5]" data-sd-id="27">
+                    <button id="tab-login" onclick="switchTab('login')" class="flex-1 py-4 text-center text-sm uppercase tracking-widest tab-active transition-all duration-200" data-sd-id="28">
+                        Login
+                    </button>
+                    <button id="tab-signup" onclick="switchTab('signup')" class="flex-1 py-4 text-center text-sm uppercase tracking-widest tab-inactive transition-all duration-200" data-sd-id="29">
+                        Sign Up
+                    </button>
+                </div>
+
+                <!-- Login Form Section -->
+                <div id="login-section" class="p-8 lg:p-10 block" data-sd-id="30">
+                    <div class="mb-8" data-sd-id="31">
+                        <h3 class="text-xl font-bold text-[#1a1a1a]" data-sd-id="32">Secure Access</h3>
+                        <p class="text-sm text-gray-500 mt-1" data-sd-id="33">Authorized personnel only. Credentials logged for auditing.</p>
+                    </div>
+
+                    <form onsubmit="return false;" class="space-y-5" data-sd-id="34">
+                        <div class="space-y-1.5" data-sd-id="35">
+                            <label for="login-email" class="text-[11px] font-bold text-gray-600 uppercase tracking-wider" data-sd-id="36">Employee Email</label>
+                            <input type="email" id="login-email" class="input-field" placeholder="e.g. j.doe@assetflow.corp" required="" data-sd-id="37">
+                        </div>
+
+                        <div class="space-y-1.5" data-sd-id="38">
+                            <div class="flex justify-between items-center" data-sd-id="39">
+                                <label for="login-password" class="text-[11px] font-bold text-gray-600 uppercase tracking-wider" data-sd-id="40">Security Key / Password</label>
+                                <a href="#" id="forgot-password-link" class="text-[11px] font-semibold text-gray-400 hover:text-[#1a1a1a] uppercase" data-sd-id="41">Reset Access?</a>
+                            </div>
+                            <input type="password" id="login-password" class="input-field" placeholder="••••••••" required="" data-sd-id="42">
+                        </div>
+
+                        <div class="flex items-center gap-2 py-2" data-sd-id="43">
+                            <input type="checkbox" id="remember" class="w-4 h-4 border-[#cccccc] text-[#10b981] focus:ring-0 rounded-[2px]" data-sd-id="44">
+                            <label for="remember" class="text-xs text-gray-600 select-none" data-sd-id="45">Maintain session for 24 hours</label>
+                        </div>
+
+                        <button id="login-submit-btn" type="submit" class="btn-primary w-full flex items-center justify-center gap-2 mt-4" data-sd-id="46">
+                            <span data-sd-id="47">Initialize Login</span>
+                            <iconify-icon icon="lucide:arrow-right" class="text-lg"></iconify-icon>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sign Up Form Section (Hidden by default) -->
+                <div id="signup-section" class="p-8 lg:p-10 hidden" data-sd-id="48">
+                    <div class="mb-8" data-sd-id="49">
+                        <h3 class="text-xl font-bold text-[#1a1a1a]" data-sd-id="50">Employee Registration</h3>
+                        <p class="text-sm text-gray-500 mt-1" data-sd-id="51">Request a new node identifier for your organization.</p>
+                    </div>
+
+                    <form onsubmit="return false;" class="space-y-4" data-sd-id="52">
+                        <div class="grid grid-cols-2 gap-4" data-sd-id="53">
+                            <div class="space-y-1.5" data-sd-id="54">
+                                <label class="text-[11px] font-bold text-gray-600 uppercase tracking-wider" data-sd-id="55">Full Name</label>
+                                <input type="text" class="input-field" placeholder="John Doe" required="" data-sd-id="56">
+                            </div>
+                            <div class="space-y-1.5" data-sd-id="57">
+                                <label class="text-[11px] font-bold text-gray-600 uppercase tracking-wider" data-sd-id="58">Organization ID</label>
+                                <input type="text" class="input-field" placeholder="CORP-XXXX" required="" data-sd-id="59">
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5" data-sd-id="60">
+                            <label class="text-[11px] font-bold text-gray-600 uppercase tracking-wider" data-sd-id="61">Corporate Email</label>
+                            <input type="email" class="input-field" placeholder="j.doe@company.com" required="" data-sd-id="62">
+                        </div>
+
+                        <div class="space-y-1.5" data-sd-id="63">
+                            <label class="text-[11px] font-bold text-gray-600 uppercase tracking-wider" data-sd-id="64">Security Key</label>
+                            <input type="password" class="input-field" placeholder="••••••••" required="" data-sd-id="65">
+                        </div>
+
+                        <div class="space-y-1.5" data-sd-id="66">
+                            <label class="text-[11px] font-bold text-gray-600 uppercase tracking-wider" data-sd-id="67">Confirm Key</label>
+                            <input type="password" class="input-field" placeholder="••••••••" required="" data-sd-id="68">
+                        </div>
+
+                        <div class="pt-2" data-sd-id="69">
+                            <p class="text-[10px] text-gray-400 leading-relaxed mb-4" data-sd-id="70">
+                                By creating an account, you acknowledge the internal compliance protocols and data governance standards of AssetFlow ERP.
+                            </p>
+                            <button id="signup-submit-btn" type="submit" class="btn-primary w-full flex items-center justify-center gap-2" data-sd-id="71">
+                                <span data-sd-id="72">Create Account</span>
+                                <iconify-icon icon="lucide:plus-circle" class="text-lg"></iconify-icon>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Form Footer -->
+                <div class="bg-[#fcfcfc] border-t border-[#e5e5e5] px-8 py-4 flex justify-between items-center" data-sd-id="73">
+                    <span class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold" data-sd-id="74">System: V4.2.0-Production</span>
+                    <span class="text-[10px] text-gray-400 uppercase tracking-widest" data-sd-id="75">Powered by AssetFlow © 2024</span>
+                </div>
+            </div>
+
+            <!-- Global Footer Context -->
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-8 text-[10px] text-gray-400 uppercase font-bold tracking-[0.2em]" data-sd-id="76">
+                <a href="#" id="footer-status-link" class="hover:text-gray-600 transition-colors" data-sd-id="77">Operational Status</a>
+                <a href="#" id="footer-privacy-link" class="hover:text-gray-600 transition-colors" data-sd-id="78">Security Policy</a>
+                <a href="#" id="footer-contact-link" class="hover:text-gray-600 transition-colors" data-sd-id="79">Helpdesk</a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function switchTab(type) {
+            const loginSection = document.getElementById('login-section');
+            const signupSection = document.getElementById('signup-section');
+            const loginTab = document.getElementById('tab-login');
+            const signupTab = document.getElementById('tab-signup');
+
+            if (type === 'login') {
+                loginSection.classList.remove('hidden');
+                signupSection.classList.add('hidden');
+                loginTab.className = 'flex-1 py-4 text-center text-sm uppercase tracking-widest tab-active transition-all duration-200';
+                signupTab.className = 'flex-1 py-4 text-center text-sm uppercase tracking-widest tab-inactive transition-all duration-200';
+            } else {
+                loginSection.classList.add('hidden');
+                signupSection.classList.remove('hidden');
+                loginTab.className = 'flex-1 py-4 text-center text-sm uppercase tracking-widest tab-inactive transition-all duration-200';
+                signupTab.className = 'flex-1 py-4 text-center text-sm uppercase tracking-widest tab-active transition-all duration-200';
+            }
+        }
+
+        // Prevent form submission flash for demo
+       // Intercept login form submission and redirect to the Asset Directory Dashboard
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Simulating authentication flash, then redirecting to your next page
+        console.log('Authentication successful. Redirecting...');
+        window.location.href = '/directory'; 
+    });
+});
+    </script>
+
+</body></html>
