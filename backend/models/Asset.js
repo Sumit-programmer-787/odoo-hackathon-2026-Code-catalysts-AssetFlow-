@@ -8,6 +8,12 @@ const assetSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    serialNumber: {                                 
+      type: String,                                 
+      trim: true,                                     
+      unique: true,                                    
+      sparse: true,                                    
+    },                                                   
     name: {
       type: String,
       required: [true, 'Asset hardware/software name is required'],
@@ -41,6 +47,11 @@ const assetSchema = new mongoose.Schema(
       ref: 'Department',
       default: null,
     },
+    location: {                                      
+      type: String,                                   
+      trim: true,                                       
+      default: 'Unassigned',                            
+    },                                                    
     location3D: {
       x: { type: Number, default: 0 },
       y: { type: Number, default: 0 },

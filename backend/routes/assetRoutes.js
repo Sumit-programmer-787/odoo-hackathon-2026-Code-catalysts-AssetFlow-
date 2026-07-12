@@ -3,7 +3,8 @@ import {
   createAsset, 
   allocateAsset, 
   requestAssetTransfer, 
-  getAssets 
+  getAssets,
+  deleteAsset,                                                                       // ADD
 } from '../controllers/assetControllers.js';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
@@ -15,5 +16,6 @@ router.route('/')
 
 router.patch('/:id/allocate', protect, authorizeRoles('Admin', 'Asset Manager'), allocateAsset);
 router.post('/:id/transfer-request', protect, requestAssetTransfer);
+router.delete('/:id', protect, authorizeRoles('Admin', 'Asset Manager'), deleteAsset);   // ADD
 
 export default router;

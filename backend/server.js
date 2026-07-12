@@ -12,6 +12,9 @@ import assetRoutes from './routes/assetRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import maintenanceRoutes from './routes/maintenanceRoutes.js';
 import auditRoutes from './routes/auditRoutes.js';
+import departmentRoutes from './routes/departmentRoutes.js';   // ADD
+import categoryRoutes from './routes/categoryRoutes.js';       // ADD
+import viewRoutes from './routes/viewRoutes.js'; 
 
 // Resolve directory paths for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -80,6 +83,8 @@ app.use('/api/assets', assetRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/audits', auditRoutes);
+app.use('/api/departments', departmentRoutes);   // ADD
+app.use('/api/categories', categoryRoutes);      // ADD
 
 // Base Health Check Route
 app.get('/api/health', (req, res) => {
