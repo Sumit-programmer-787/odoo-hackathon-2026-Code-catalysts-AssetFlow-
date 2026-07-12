@@ -4,7 +4,7 @@ import {
   allocateAsset, 
   requestAssetTransfer, 
   getAssets 
-} from '../controllers/assetController.js';
+} from '../controllers/assetControllers.js';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
 const router = express.Router();

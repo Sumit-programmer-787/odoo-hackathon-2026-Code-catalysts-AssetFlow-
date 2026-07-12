@@ -1,41 +1,57 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
-// 1. ROUTE IMPORTS
+// Route Imports
 import authRoutes from './routes/authRoutes.js';
 import assetRoutes from './routes/assetRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import maintenanceRoutes from './routes/maintenanceRoutes.js';
 import auditRoutes from './routes/auditRoutes.js';
+import viewRoutes from './routes/viewRoutes.js'; 
 
-// Load environment variables
+// ES Modules directory resolution fix
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables prior to database execution
 dotenv.config();
 
-// Establish connection to MongoDB
+// Establish connection to MongoDB cluster
 connectDB();
 
 const app = express();
 
-// Middleware setup
+// Configure EJS view engine parameters to accurately target the local workspace architecture
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../frontend/views'));
+
+// Core parsing and static file routing middleware packages
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
+app.use(express.static(path.join(__dirname, '../frontend/public')));
 
-// 2. ROUTE MOUNTING
+// Mount API Rest Handlers
 app.use('/api/auth', authRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/audits', auditRoutes);
 
-// Base Health Check Route
+// Mount Frontend Template Interface Routers
+app.use('/', viewRoutes);
+
+// App Base Health Verification Endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date() });
 });
 
-// Fallback Middleware for Error and Route Handling (MUST stay at the bottom)
+// Structural Fallback Middleware Layers
 app.use(notFound);
 app.use(errorHandler);
 
