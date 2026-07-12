@@ -1,401 +1,202 @@
-<!DOCTYPE html><html lang="en" class="scroll-smooth"><head>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AssetFlow ERP | Resource Allocation &amp; Transfers</title>
+    <title>AssetFlow ERP | Resource Scheduling Console</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --charcoal: #1a1a1a;
             --graphite: #2a2a2a;
             --teal-accent: #10b981;
             --border-gray: #333333;
-            --danger-red: #ef4444;
         }
-
         body {
             font-family: 'Public Sans', sans-serif;
             background-color: var(--charcoal);
             color: #e5e5e5;
             -webkit-font-smoothing: antialiased;
         }
-
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .industrial-border {
-            border: 1px solid var(--border-gray);
-        }
-
+        .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+        .industrial-border { border: 1px solid var(--border-gray); }
         .input-field {
-            @apply w-full bg-[#161616] border border-[#333] px-3 py-2 text-xs text-white focus:outline-none focus:border-[#10b981] transition-colors rounded-[2px];
+            background-color: #111111;
+            border: 1px solid var(--border-gray);
+            height: 38px;
+            padding: 0 12px;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
         }
-
-        .status-badge {
-            @apply px-2 py-0.5 text-[10px] font-bold uppercase tracking-tighter rounded-[2px] inline-flex items-center gap-1;
-        }
-
-        .btn-primary {
-            @apply bg-[#10b981] hover:bg-[#0d9469] text-white font-bold py-2 px-4 text-[10px] uppercase tracking-widest transition-all rounded-[2px] active:scale-[0.98];
-        }
-
-        .btn-secondary {
-            @apply border border-[#333] hover:border-white text-gray-400 hover:text-white font-bold py-2 px-4 text-[10px] uppercase tracking-widest transition-all rounded-[2px];
-        }
-
-        .btn-danger {
-            @apply border border-red-500/50 text-red-500 hover:bg-red-500 hover:text-white font-bold py-2 px-4 text-[10px] uppercase tracking-widest transition-all rounded-[2px];
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: var(--charcoal); }
-        ::-webkit-scrollbar-thumb { background: var(--border-gray); }
-        ::-webkit-scrollbar-thumb:hover { background: var(--teal-accent); }
     </style>
 </head>
-<body>
-    <!-- Root Container -->
-    <div class="flex h-screen overflow-hidden bg-[#0f0f0f]" data-sd-id="1">
-        
-        <!-- Persistent Sidebar Nav -->
-        <aside id="sidebar" class="w-64 industrial-border border-r border-y-0 border-l-0 bg-[#161616] flex flex-col z-50" data-sd-id="2">
-            <div class="p-5 flex items-center gap-3 border-b border-[#333]" data-sd-id="3">
-                <div class="w-8 h-8 bg-[#10b981] flex items-center justify-center rounded-[2px] shrink-0" data-sd-id="4">
-                    <iconify-icon icon="lucide:boxes" class="text-xl text-white"></iconify-icon>
-                </div>
-                <div class="overflow-hidden whitespace-nowrap" data-sd-id="5">
-                    <h1 class="text-sm font-bold uppercase tracking-widest text-white" data-sd-id="6">AssetFlow</h1>
-                    <p class="text-[10px] text-gray-500 font-semibold tracking-tighter uppercase" data-sd-id="7">Operations / Central-01</p>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- Top Navigation Header -->
+    <header class="h-12 bg-[#161616] industrial-border border-t-0 border-x-0 flex items-center justify-between px-6 z-50 shrink-0 relative">
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-[#10b981] flex items-center justify-center text-[10px] text-black font-black mono rounded-sm">⚡</div>
+                <h1 class="text-xs font-black uppercase tracking-widest text-white mono">AssetFlow</h1>
+            </div>
+            <div class="text-[11px] mono text-gray-500">LOGISTICS MODULE // TIMELINE & RESOURCE SCHEDULING</div>
+        </div>
+
+        <!-- PROFILE AND USER MENU -->
+        <div class="flex items-center gap-4 relative">
+            <button id="notification-bell-btn" class="text-gray-400 hover:text-white relative h-8 w-8 flex items-center justify-center rounded hover:bg-[#222]">
+                <iconify-icon icon="lucide:bell"></iconify-icon>
+                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            <div class="h-4 w-[1px] bg-[#333]"></div>
+            <div class="relative">
+                <button id="user-profile-btn" class="flex items-center gap-2 text-left group focus:outline-none">
+                    <div class="w-6 h-6 rounded-sm bg-[#2a2a2a] industrial-border flex items-center justify-center font-bold text-[10px] text-gray-300">AM</div>
+                    <div class="hidden md:block">
+                        <p class="text-[10px] font-bold text-gray-300 leading-none">A. MILLER</p>
+                        <p class="text-[9px] text-[#10b981] mono leading-none mt-0.5">SYS-ADMIN</p>
+                    </div>
+                </button>
+                <div id="profile-dropdown" class="absolute right-0 top-10 w-44 bg-[#161616] border border-[#333] shadow-2xl rounded-sm hidden z-50 flex flex-col overflow-hidden">
+                    <div class="p-2.5 border-b border-[#252525] bg-[#1c1c1c]">
+                        <p class="text-[9px] font-bold text-gray-500 mono uppercase tracking-wider">Access Node</p>
+                        <p class="text-[11px] font-mono text-gray-300 truncate">miller@assetflow.corp</p>
+                    </div>
+                    <a href="/auth/logout" class="p-2.5 text-[11px] text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors flex items-center gap-2 font-medium mono">
+                        <iconify-icon icon="lucide:log-out"></iconify-icon>Terminate Session
+                    </a>
                 </div>
             </div>
+        </div>
+    </header>
 
-            <nav class="flex-1 py-4 overflow-y-auto" data-sd-id="8">
-                <div class="px-4 mb-2" data-sd-id="9">
-                    <span class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]" data-sd-id="10">Management</span>
-                </div>
-                <ul class="space-y-1 px-2" data-sd-id="11">
-    <li data-sd-id="12">
-        <a href="/terminal" id="nav-dashboard-link" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group" data-sd-id="13">
-            <iconify-icon icon="lucide:layout-dashboard" class="text-lg"></iconify-icon>
-            <span data-sd-id="14">Operational Dashboard</span>
-        </a>
-    </li>
-    <li data-sd-id="15">
-        <a href="/directory" id="nav-inventory-link" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group" data-sd-id="16">
-            <iconify-icon icon="lucide:database" class="text-lg"></iconify-icon>
-            <span data-sd-id="17">Asset Directory</span>
-        </a>
-    </li>
-    <li data-sd-id="18">
-        <a href="/resources-1" id="nav-transfers-link" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-[#10b981] bg-[#1a1a1a] rounded-[2px] group" data-sd-id="19">
-            <iconify-icon icon="lucide:arrow-left-right" class="text-lg"></iconify-icon>
-            <span data-sd-id="20">Resource Allocations</span>
-        </a>
-    </li>
-    <li>
-        <a href="/resources-2" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group">
-            <iconify-icon icon="lucide:calendar-clock" class="text-lg"></iconify-icon>
-            <span>Resource Booking</span>
-        </a>
-    </li>
-    <li>
-        <a href="/process" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] rounded-[2px] transition-colors group">
-            <iconify-icon icon="lucide:cable" class="text-lg"></iconify-icon>
-            <span>Process Visualization</span>
-        </a>
-    </li>
-</ul>
+    <div class="flex flex-1 min-h-0">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-[#161616] industrial-border border-l-0 border-y-0 p-4 space-y-2">
+            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest px-3 mono">Management</p>
+            <nav class="space-y-1 text-xs">
+                <a href="/directory" class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:bg-[#222] rounded-sm"><iconify-icon icon="lucide:layers"></iconify-icon>Asset Directory</a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 bg-[#222] border border-[#333] text-white rounded-sm"><iconify-icon icon="lucide:calendar" class="text-[#10b981]"></iconify-icon>Resource Booking</a>
             </nav>
-
-            <div class="p-4 border-t border-[#333] bg-[#0f0f0f]" data-sd-id="24">
-                <div class="flex items-center justify-between mb-2" data-sd-id="25">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase" data-sd-id="26">Transfer Queue</span>
-                    <span class="text-[9px] font-bold text-amber-500 uppercase" data-sd-id="27">12 Pending</span>
-                </div>
-                <div class="w-full bg-[#333] h-1 rounded-full overflow-hidden" data-sd-id="28">
-                    <div class="bg-amber-500 h-full w-[45%]" data-sd-id="29"></div>
-                </div>
-            </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col relative overflow-hidden" data-sd-id="30">
+        <!-- Main Timelines Workspace Window -->
+        <main class="flex-1 bg-[#1a1a1a] p-6 overflow-y-auto space-y-6">
             
-            <!-- Top Navbar -->
-            <header class="h-16 industrial-border border-b border-x-0 border-t-0 bg-[#161616] flex items-center justify-between px-6 z-40" data-sd-id="31">
-                <div class="flex items-center gap-6" data-sd-id="32">
-                    <div class="flex flex-col" data-sd-id="33">
-                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest" data-sd-id="34">Workflow</span>
-                        <span class="text-xs font-semibold text-white uppercase tracking-tight" data-sd-id="35">Resource Allocation &amp; Transfer Engine</span>
+            <!-- Timeline Grid View Block (SET TO CURRENT YEAR 2026) -->
+            <div class="bg-[#161616] industrial-border rounded-sm p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-4">
+                        <h3 class="text-xs uppercase font-black tracking-widest text-white mono">Master Resource Timeline</h3>
+                        <div class="flex gap-3 text-[10px] mono">
+                            <span class="text-blue-400">● Upcoming</span>
+                            <span class="text-[#10b981]">● Ongoing</span>
+                            <span class="text-red-500">● Conflict</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center bg-[#111] border border-[#333] px-3 py-1 rounded-sm gap-4">
+                        <span class="mono text-xs text-white uppercase font-bold">MAY 2026</span>
+                        <div class="flex gap-2 text-gray-500"><button class="hover:text-white">←</button><button class="hover:text-white">→</button></div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-5" data-sd-id="36">
-                    <div class="flex items-center gap-3 border-l border-[#333] pl-5" data-sd-id="37">
-                        <button id="header-notifications-btn" class="relative text-gray-400 hover:text-white p-1" data-sd-id="38">
-                            <iconify-icon icon="lucide:bell" class="text-xl"></iconify-icon>
-                            <span class="absolute top-0 right-0 w-2 h-2 bg-amber-500 rounded-full" data-sd-id="39"></span>
-                        </button>
-                        <div class="h-8 w-px bg-[#333] mx-1" data-sd-id="40"></div>
-                        <div class="flex items-center gap-3" data-sd-id="41">
-                            <div class="text-right" data-sd-id="42">
-                                <p class="text-[10px] font-bold text-white uppercase leading-none" data-sd-id="43">A. Miller</p>
-                                <p class="text-[8px] text-gray-500 font-semibold uppercase" data-sd-id="44">Ops Manager</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-[#1c1c1c] border-b border-[#2d2d2d] text-[10px] uppercase font-bold text-gray-400 mono">
+                                <th class="p-3 w-40">Resource Unit</th>
+                                <th class="p-3">May 01</th>
+                                <th class="p-3">May 02</th>
+                                <th class="p-3">May 03</th>
+                                <th class="p-3">May 04</th>
+                                <th class="p-3">May 05</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#252525] mono">
+                            <tr>
+                                <td class="p-3 font-bold text-gray-300">#LT-7729-A</td>
+                                <td class="p-3 bg-blue-500/10 text-blue-400 border border-blue-500/20">#BK-901<br><span class="text-[9px] text-gray-500">Upcoming</span></td>
+                                <td class="p-3 bg-emerald-500/10 text-[#10b981] border border-emerald-500/20">#DR-09-AIR<br><span class="text-[9px] text-gray-500">Ongoing</span></td>
+                                <td class="p-3 bg-red-500/10 text-red-400 border border-red-500/20 font-bold">⚠️ COLLISION<br><span class="text-[9px] text-red-500">Overlapped</span></td>
+                                <td class="p-3 text-gray-600">—</td>
+                                <td class="p-3 text-gray-600">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Forms Workspace Splitting Layout Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Reservation Inputs Block -->
+                <div class="lg:col-span-2 bg-[#161616] industrial-border p-5 rounded-sm space-y-4">
+                    <h3 class="text-xs uppercase font-black tracking-widest text-white mono border-b border-[#2a2a2a] pb-2">New Reservation Request</h3>
+                    <form class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mono">Select Target Resource</label>
+                            <input type="text" class="input-field w-full rounded-sm" value="#LT-7729-A (Panasonic Toughbook)" readonly>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mono">Requestor Identifier (Email)</label>
+                            <input type="email" class="input-field w-full rounded-sm" value="s.chen@assetflow.corp" readonly>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mono">Start Timestamp</label>
+                            <input type="datetime-local" class="input-field w-full rounded-sm" value="2026-05-04T09:00">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mono">End Timestamp</label>
+                            <input type="datetime-local" class="input-field w-full rounded-sm" value="2026-05-06T18:00">
+                        </div>
+                        <div class="sm:col-span-2 flex justify-end gap-3 pt-2">
+                            <button type="button" class="px-4 py-2 bg-[#222] border border-[#333] text-xs font-bold text-gray-300 uppercase hover:text-white rounded-sm">Discard</button>
+                            <button type="submit" class="px-4 py-2 bg-[#10b981] text-black text-xs font-black uppercase hover:bg-[#0d9469] rounded-sm">Initialize Booking</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Collision Detection Side Panel Logs (SET TO CURRENT YEAR 2026) -->
+                <div class="bg-[#161616] industrial-border p-5 rounded-sm space-y-4">
+                    <h3 class="text-xs uppercase font-black tracking-widest text-white mono border-b border-[#2a2a2a] pb-2">Conflict Detection Report</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-red-500/5 border border-red-500/20 rounded-sm">
+                            <div class="flex items-center gap-2 text-red-400 font-bold text-[10px] uppercase mono mb-1">
+                                <iconify-icon icon="lucide:alert-triangle"></iconify-icon>Critical Overlap
                             </div>
-                            <button id="header-user-btn" class="w-8 h-8 bg-[#333] rounded-[2px] flex items-center justify-center hover:bg-[#444]" data-sd-id="45">
-                                <iconify-icon icon="lucide:user" class="text-lg text-gray-300"></iconify-icon>
-                            </button>
+                            <p class="text-[11px] text-gray-400 leading-relaxed">MAY 05 detected as over-allocated for unit #LT-7729-A.</p>
                         </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Allocation & Transfer Content -->
-            <section class="flex-1 overflow-y-auto p-6 space-y-8" data-sd-id="46">
-                
-                <div class="grid grid-cols-1 xl:grid-cols-3 gap-8" data-sd-id="47">
-                    
-                    <!-- Form Column (Left 2/3) -->
-                    <div class="xl:col-span-2 space-y-6" data-sd-id="48">
-                        <div class="bg-[#161616] industrial-border" data-sd-id="49">
-                            <div class="px-5 py-3 border-b border-[#333] bg-[#1a1a1a] flex justify-between items-center" data-sd-id="50">
-                                <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="51">New Allocation Entry</h3>
-                                <span class="text-[9px] text-gray-500 mono uppercase" data-sd-id="52">Ref: AF-TX-2024-9921</span>
+                        <div class="p-3 bg-[#111] border border-[#2d2d2d] rounded-sm flex justify-between items-center">
+                            <div>
+                                <p class="text-[9px] uppercase font-bold text-gray-500 mono">Existing Booking</p>
+                                <p class="text-xs text-white font-medium font-mono mt-0.5">#BK-901 / Marcus Vance</p>
+                                <p class="text-[10px] text-gray-500 mono mt-1">ENDS: 2026-05-05 17:00</p>
                             </div>
-                            
-                            <form onsubmit="return false;" class="p-6 space-y-6" data-sd-id="53">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" data-sd-id="54">
-                                    <!-- Asset Selection -->
-                                    <div class="space-y-1.5" data-sd-id="55">
-                                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="56">Select Asset (Tag/Serial)</label>
-                                        <div class="relative" data-sd-id="57">
-                                            <iconify-icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600"></iconify-icon>
-                                            <input type="text" class="input-field pl-10" placeholder="e.g. #LT-7729-A or 4492-001-XJ" value="#LT-7729-A" data-sd-id="58">
-                                        </div>
-                                        <p class="text-[9px] text-gray-600 italic" data-sd-id="59">Panasonic Toughbook FZ-55 (Industrial Series)</p>
-                                    </div>
-
-                                    <!-- Employee Multi-Select -->
-                                    <div class="space-y-1.5" data-sd-id="60">
-                                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="61">Personnel / Requestor</label>
-                                        <div class="relative" data-sd-id="62">
-                                            <select class="input-field appearance-none" data-sd-id="63">
-                                                <option data-sd-id="64">David K. (LOGS-02)</option>
-                                                <option selected="" data-sd-id="65">Marcus Vance (ENG-42)</option>
-                                                <option data-sd-id="66">Sarah Chen (MAINT-12)</option>
-                                            </select>
-                                            <iconify-icon icon="lucide:chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none"></iconify-icon>
-                                        </div>
-                                    </div>
-
-                                    <!-- Department -->
-                                    <div class="space-y-1.5" data-sd-id="67">
-                                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="68">Operational Department</label>
-                                        <input type="text" class="input-field" placeholder="Field Engineering" value="Field Engineering" data-sd-id="69">
-                                    </div>
-
-                                    <!-- Date Range -->
-                                    <div class="grid grid-cols-2 gap-4" data-sd-id="70">
-                                        <div class="space-y-1.5" data-sd-id="71">
-                                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="72">Start Date</label>
-                                            <input type="date" class="input-field mono" value="2024-05-25" data-sd-id="73">
-                                        </div>
-                                        <div class="space-y-1.5" data-sd-id="74">
-                                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="75">Expected Return</label>
-                                            <input type="date" class="input-field mono" value="2024-06-01" data-sd-id="76">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Allocation Notes -->
-                                <div class="space-y-1.5" data-sd-id="77">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="78">Allocation Justification &amp; Notes</label>
-                                    <textarea class="input-field min-h-[100px] resize-none" placeholder="Enter reason for equipment request, project codes, or special handling instructions..." data-sd-id="79"></textarea>
-                                </div>
-
-                                <!-- Conflict Block State -->
-                                <div class="bg-red-500/5 border border-red-500/20 p-4 rounded-[2px] flex items-start gap-4" data-sd-id="80">
-                                    <div class="w-10 h-10 bg-red-500/10 flex items-center justify-center rounded-[2px] shrink-0" data-sd-id="81">
-                                        <iconify-icon icon="lucide:alert-octagon" class="text-red-500 text-xl"></iconify-icon>
-                                    </div>
-                                    <div class="flex-1" data-sd-id="82">
-                                        <h4 class="text-xs font-bold text-red-500 uppercase tracking-tight" data-sd-id="83">Active Conflict Detected</h4>
-                                        <p class="text-[10px] text-gray-400 mt-1 leading-relaxed" data-sd-id="84">
-                                            Asset <span class="text-white font-bold" data-sd-id="85">#LT-7729-A</span> is currently held by 
-                                            <span class="text-white font-bold" data-sd-id="86">Priya Sharma (LOGS-01)</span> until 2024-05-28. 
-                                            New allocation cannot be initialized without a validated transfer request.
-                                        </p>
-                                        <div class="mt-4 flex gap-3" data-sd-id="87">
-                                            <button id="transfer-request-btn" class="btn-primary bg-red-600 hover:bg-red-700" data-sd-id="88">Initialize Transfer Request</button>
-                                            <button id="cancel-conflict-btn" class="btn-secondary" data-sd-id="89">Override Check</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="pt-4 border-t border-[#333] flex justify-end gap-3" data-sd-id="90">
-                                    <button class="btn-secondary" data-sd-id="91">Save Draft</button>
-                                    <button class="btn-primary opacity-50 cursor-not-allowed" data-sd-id="92">Validate &amp; Finalize</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Context/Stats -->
-                    <div class="space-y-6" data-sd-id="93">
-                        <div class="bg-[#161616] industrial-border" data-sd-id="94">
-                            <div class="px-5 py-3 border-b border-[#333] bg-[#1a1a1a]" data-sd-id="95">
-                                <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="96">Utilization Statistics</h3>
-                            </div>
-                            <div class="p-6 space-y-4" data-sd-id="97">
-                                <div class="flex justify-between items-end" data-sd-id="98">
-                                    <span class="text-[10px] text-gray-500 uppercase font-bold" data-sd-id="99">Avg. Turnover Time</span>
-                                    <span class="text-lg font-extrabold mono text-white" data-sd-id="100">4.2 Days</span>
-                                </div>
-                                <div class="w-full bg-[#333] h-1.5 rounded-full overflow-hidden" data-sd-id="101">
-                                    <div class="bg-[#10b981] h-full w-[72%]" data-sd-id="102"></div>
-                                </div>
-                                <div class="flex justify-between items-end pt-2" data-sd-id="103">
-                                    <span class="text-[10px] text-gray-500 uppercase font-bold" data-sd-id="104">Department Quota</span>
-                                    <span class="text-lg font-extrabold mono text-white" data-sd-id="105">88%</span>
-                                </div>
-                                <div class="w-full bg-[#333] h-1.5 rounded-full overflow-hidden" data-sd-id="106">
-                                    <div class="bg-amber-500 h-full w-[88%]" data-sd-id="107"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-[#161616] industrial-border p-6" data-sd-id="108">
-                            <div class="flex items-center gap-3 mb-4" data-sd-id="109">
-                                <iconify-icon icon="lucide:info" class="text-blue-500 text-lg"></iconify-icon>
-                                <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="110">Policy Reminder</h3>
-                            </div>
-                            <p class="text-[10px] text-gray-500 leading-relaxed italic" data-sd-id="111">
-                                "All high-value assets (&gt; $2,500) require secondary manager approval for inter-departmental transfers exceeding 72 hours."
-                            </p>
+                            <span class="status-pill bg-emerald-500/10 text-[#10b981] border border-emerald-500/20">Ongoing</span>
                         </div>
                     </div>
                 </div>
-
-                <!-- Transfer Approval Queue -->
-                <div class="bg-[#161616] industrial-border" data-sd-id="112">
-                    <div class="px-5 py-4 border-b border-[#333] flex justify-between items-center bg-[#1a1a1a]" data-sd-id="113">
-                        <div data-sd-id="114">
-                            <h3 class="text-[10px] font-bold text-white uppercase tracking-widest" data-sd-id="115">Pending Transfer Requests</h3>
-                            <p class="text-[9px] text-gray-500 uppercase tracking-tighter mt-1" data-sd-id="116">Requiring immediate operational validation</p>
-                        </div>
-                        <div class="flex gap-2" data-sd-id="117">
-                            <button class="btn-secondary h-8 py-0 flex items-center gap-2" data-sd-id="118">
-                                <iconify-icon icon="lucide:filter"></iconify-icon> Filter Queue
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto" data-sd-id="119">
-                        <table class="w-full text-left border-collapse" data-sd-id="120">
-                            <thead data-sd-id="121">
-                                <tr class="bg-[#131313] text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-[#333]" data-sd-id="122">
-                                    <th class="px-6 py-4" data-sd-id="123">Asset Tag</th>
-                                    <th class="px-6 py-4" data-sd-id="124">Current Holder</th>
-                                    <th class="px-6 py-4" data-sd-id="125">Requested By</th>
-                                    <th class="px-6 py-4" data-sd-id="126">Target Department</th>
-                                    <th class="px-6 py-4" data-sd-id="127">Conflict Status</th>
-                                    <th class="px-6 py-4" data-sd-id="128">Request Age</th>
-                                    <th class="px-6 py-4 text-right" data-sd-id="129">Decision</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-xs divide-y divide-[#333]" data-sd-id="130">
-                                <!-- Row 1 -->
-                                <tr class="hover:bg-[#1e1e1e] transition-colors" data-sd-id="131">
-                                    <td class="px-6 py-4 mono font-bold text-white" data-sd-id="132">#CAM-08-X</td>
-                                    <td class="px-6 py-4 text-gray-400" data-sd-id="133">Sarah Chen</td>
-                                    <td class="px-6 py-4 text-white font-semibold" data-sd-id="134">Derrick Lowe</td>
-                                    <td class="px-6 py-4 text-gray-400" data-sd-id="135">AUDIT-03</td>
-                                    <td class="px-6 py-4" data-sd-id="136">
-                                        <span class="status-badge bg-red-500/10 text-red-500 border border-red-500/20" data-sd-id="137">
-                                            <iconify-icon icon="lucide:flame"></iconify-icon> High Priority
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 mono text-gray-500" data-sd-id="138">2h 14m</td>
-                                    <td class="px-6 py-4 text-right flex justify-end gap-2" data-sd-id="139">
-                                        <button class="btn-primary py-1 px-3" data-sd-id="140">Approve</button>
-                                        <button class="btn-danger py-1 px-3" data-sd-id="141">Deny</button>
-                                    </td>
-                                </tr>
-                                <!-- Row 2 -->
-                                <tr class="hover:bg-[#1e1e1e] transition-colors" data-sd-id="142">
-                                    <td class="px-6 py-4 mono font-bold text-white" data-sd-id="143">#LT-990-P</td>
-                                    <td class="px-6 py-4 text-gray-400" data-sd-id="144">Marcus Vance</td>
-                                    <td class="px-6 py-4 text-white font-semibold" data-sd-id="145">Priya Sharma</td>
-                                    <td class="px-6 py-4 text-gray-400" data-sd-id="146">LOGS-01</td>
-                                    <td class="px-6 py-4" data-sd-id="147">
-                                        <span class="status-badge bg-amber-500/10 text-amber-500 border border-amber-500/20" data-sd-id="148">
-                                            <iconify-icon icon="lucide:clock"></iconify-icon> Scheduled
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 mono text-gray-500" data-sd-id="149">6h 45m</td>
-                                    <td class="px-6 py-4 text-right flex justify-end gap-2" data-sd-id="150">
-                                        <button class="btn-primary py-1 px-3" data-sd-id="151">Approve</button>
-                                        <button class="btn-danger py-1 px-3" data-sd-id="152">Deny</button>
-                                    </td>
-                                </tr>
-                                <!-- Row 3 -->
-                                <tr class="hover:bg-[#1e1e1e] transition-colors" data-sd-id="153">
-                                    <td class="px-6 py-4 mono font-bold text-white" data-sd-id="154">#GEN-SET-04</td>
-                                    <td class="px-6 py-4 text-gray-400" data-sd-id="155">Field Unit B</td>
-                                    <td class="px-6 py-4 text-white font-semibold" data-sd-id="156">Robert H.</td>
-                                    <td class="px-6 py-4 text-gray-400" data-sd-id="157">ENERGY-X</td>
-                                    <td class="px-6 py-4" data-sd-id="158">
-                                        <span class="status-badge bg-blue-500/10 text-blue-500 border border-blue-500/20" data-sd-id="159">
-                                            <iconify-icon icon="lucide:arrow-right-left"></iconify-icon> Routine
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 mono text-gray-500" data-sd-id="160">1d 04h</td>
-                                    <td class="px-6 py-4 text-right flex justify-end gap-2" data-sd-id="161">
-                                        <button class="btn-primary py-1 px-3" data-sd-id="162">Approve</button>
-                                        <button class="btn-danger py-1 px-3" data-sd-id="163">Deny</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="px-6 py-3 border-t border-[#333] bg-[#131313] flex justify-between items-center" data-sd-id="164">
-                        <span class="text-[9px] font-bold text-gray-500 uppercase" data-sd-id="165">Automated Conflict Resolution Enabled</span>
-                        <div class="flex gap-4" data-sd-id="166">
-                            <a href="#" class="text-[9px] font-bold text-[#10b981] uppercase hover:underline" data-sd-id="167">View History</a>
-                            <a href="#" class="text-[9px] font-bold text-[#10b981] uppercase hover:underline" data-sd-id="168">Download Report</a>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-
-            <!-- Sticky Footer -->
-            <footer class="h-10 industrial-border border-t border-x-0 border-b-0 bg-[#161616] flex items-center justify-between px-6 z-40" data-sd-id="169">
-                <div class="flex gap-4" data-sd-id="170">
-                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest" data-sd-id="171">AssetFlow v4.2.0-PROD</span>
-                    <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest px-2 border-l border-[#333]" data-sd-id="172">Validation Module: ACTIVE</span>
-                </div>
-                <div class="flex gap-6 items-center" data-sd-id="173">
-                    <span class="text-[9px] font-bold text-gray-400 uppercase tabular-nums" data-sd-id="174">15:14:02 UTC</span>
-                </div>
-            </footer>
-
+            </div>
         </main>
     </div>
 
     <script>
-        // Form Logic Previews
-        const transferBtn = document.getElementById('transfer-request-btn');
-        transferBtn.addEventListener('click', () => {
-            alert('Transfer workflow initialized. Notifying Current Holder (Priya Sharma) and Department Manager for validation.');
+        // Profile Dropdown Menu Interaction Block
+        const profileBtn = document.getElementById('user-profile-btn');
+        const profileDropdown = document.getElementById('profile-dropdown');
+
+        profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!profileDropdown.contains(e.target) && e.target !== profileBtn) {
+                profileDropdown.classList.add('hidden');
+            }
         });
     </script>
-
-</body></html>
-
-
+</body>
+</html>
