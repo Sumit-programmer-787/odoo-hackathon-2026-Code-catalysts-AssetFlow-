@@ -39,4 +39,4 @@ The frontend layer is architected using server-side compiled Embedded JavaScript
 
 ##  The Team: Code Catalysts
 * **Frontend UI/UX Architect & Systems Router:** [Shreyanshu Mishra / Shreyanshu568]
-* **Backend Engineer & Database Systems Administrator:** [Your Partner's Name / Sumit-programmer-787]
+* **Backend Engineer & Database Systems Administrator:** [Sumit Kumar / Sumit-programmer-787]
