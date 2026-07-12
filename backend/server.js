@@ -8,6 +8,8 @@ import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import assetRoutes from './routes/assetRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import maintenanceRoutes from './routes/maintenanceRoutes.js';
+import auditRoutes from './routes/auditRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +27,8 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/audits', auditRoutes);
 
 // Base Health Check Route
 app.get('/api/health', (req, res) => {
@@ -37,5 +41,5 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 AssetFlow Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  console.log(` AssetFlow Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
